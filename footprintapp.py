@@ -76,135 +76,160 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung):
             [0,0,-akt[4],0,0,0,0,0,0,0,0,0],
             [0,0,0,-akt[5],0,0,0,0,0,0,0,0],
             [0,0,0,0,-akt[6],0,0,0,0,0,0,0]]
-    b_ub = [max_co2,min_vals[0],min_vals[1],min_vals[2],min_vals[3],min_vals[4]]
-    A_eq = [[1,0,0,0,0,akt[0]*53*1860*1/6*1/340,0,0,0,0,0,0],
-            [1,0,0,0,0,0,akt[0]*53*1860*1/6*1/660,0,0,0,0,0],
-            [1,0,0,0,0,0,0,akt[0]*53*1860*1/6*1/1630,0,0,0,0],
-            [1,0,0,0,0,0,0,0,akt[0]*53*1860*1/6*1/3040,0,0,0],
-            [1,0,0,0,0,0,0,0,0,akt[0]*53*1860*1/6*1/860,0,0],
-            [1,0,0,0,0,0,0,0,0,0,akt[0]*53*1860*1/6*1/1370,0]]
+    b_ub = [max_co2,-min_vals[0],-min_vals[1],-min_vals[2],-min_vals[3],-min_vals[4]]
+    A_eq = [[-akt[0]*53*1860*1/6*1/340,0,0,0,0,1,0,0,0,0,0,0],
+            [-akt[0]*53*1860*1/6*1/660,0,0,0,0,0,1,0,0,0,0,0],
+            [-akt[0]*53*1860*1/6*1/1630,0,0,0,0,0,0,1,0,0,0,0],
+            [-akt[0]*53*1860*1/6*1/3040,0,0,0,0,0,0,0,1,0,0,0],
+            [-akt[0]*53*1860*1/6*1/860,0,0,0,0,0,0,0,0,1,0,0],
+            [-akt[0]*53*1860*1/6*1/1370,0,0,0,0,0,0,0,0,0,1,0]]
     b_eq = [0.273*365+akt[0]*53*1860*1/6*1/340, 0.202*365+akt[0]*53*1860*1/6*1/660, 0.427*365+akt[0]*53*1860*1/6*1/660, 0.212*365+akt[0]*53*1860*1/6*1/3040, 0.151*365+akt[0]*53*1860*1/6*1/860, 0.04*365+akt[0]*53*1860*1/6*1/1370]
     
     #Löse lineares Programm
-    res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=None, method='simplex')
+    res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=[(0,1),(0,1),(0,1),(0,1),(0,1),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None)], method='simplex')
         
     print(res.x)
     return res.x
        
 # 
+# Titellines -----------------------------------------------------------------------------------------------------------------------
 
 st.set_page_config(page_title='Fußabdruck', page_icon=None, layout='wide', initial_sidebar_state='expanded')
+st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
+c1,c2 = st.beta_columns((7,2))
+c1.write("""
+        # Fußabdruck - Optimierung
+        ## Optimiere deinen ökologischen Fußabdruck
+    """)
+navigation = c2.selectbox('', ["Startseite","Motivation", "Versuche"])
+st.markdown("***")
 
-st.write("""
-    # Fußabdruck - Optimierung
-    ## Optimiere deinen ökologischen Fußabdruck
-""")
+#==============================================================================================================================
+if navigation == 'Startseite':
+    # Sidebar ----------------------------------------------------------------------------------------------------------------------
+    # Sidebar sind Abfragen nach aktuellem Zustand
+    st.sidebar.header('Eingabeparameter zur Berechnung deines aktuellen CO2-Fußabdrucks')
+    
+    st.sidebar.markdown("***")
+    st.sidebar.write("""
+        ### Kategorie: Ernährung
+    """)
+    nahrung1 = st.sidebar.text_input(label='Wie viel Kilogramm Fleisch und Fisch konsumierst du wöchentlich?', value=1.1)
+    nahrung2 = st.sidebar.radio('Wie wichtig ist dir, dass die Lebensmittel regional sind?',['sehr wichtig','manchmal wichtig','garnicht wichtig'])
+    st.sidebar.markdown("***")
+    st.sidebar.write("""
+        ### Kategorie: Wohnen
+    """)
+    wohnen1 = st.sidebar.slider(label='Auf wie viel Grad heizt du deine Wohnung normalerweise?', min_value=18,max_value=24,step=1)
+    wohnen2 = st.sidebar.text_input(label='Wie viel Quadratmeter Wohnfläche hast du zur Verfügung (pro Person)?', value=47)
+    st.sidebar.markdown("***")
+    st.sidebar.write("""
+        ### Kategorie: Mobilität
+    """)
+    mob1 = st.sidebar.text_input(label='Wie viel Kilometer fährst du pro Jahr mit dem Auto (pro Person)?', value=11888)
+    mob2 = st.sidebar.text_input(label='Wie viele Stunden bist du in den letzten vier Jahren geflogen?', value=12)
+    st.sidebar.markdown("***")
+    st.sidebar.write("""
+        ### Kategorie: Konsum
+    """)
+    konsum1 = st.sidebar.text_input(label='Wie viele Kleidungsstücke kaufst du im Jahr?', value=60)
+    #-------------------------------------------------------------------------------------------------------------------------
+    
+    c1,c2,c3 = st.beta_columns((1,5,1))
+    image1= Image.open('Umweltschutz1.jpg')
+    c2.image(image1, width=700, clamp=False, channels='RGB', output_format='auto')
+    
+    # Berechne den aktuellen fußabdruck
+    akt = [float(nahrung1),nahrung2,wohnen1,float(wohnen2),float(mob1),float(mob2),float(konsum1)]
+    akt_abdruck, co2_akt, co2_akt_nach_kat, faktor_nahrung = akt_abdruck(akt)
+    
+    st.write("""
+        ### Zunächst ein paar Informationen zu deinem aktuellen Fußabdruck.
+    """)
+    st.write('Dein Fußabdruck beträgt    '+str(round(akt_abdruck))+"""    Kilogramm. Im Vergleich dazu lag der durchschnittliche CO2 Fußabdruck
+             in Deutschland im Jahr 2019 bei ca. 7900 Kilogramm. Der weltweite Fußabdruck bemisst sogar nur 4800 Kilogramm.""")
+    
+    
+    d = {'Durchschnitt Deutschland CO2': [640,2730,3125,507], 'Dein CO2':co2_akt_nach_kat}
+    #chart_data = pd.DataFrame(data=d, index=['Nahrung', 'Wohnen', 'Mobilität', 'Konsum (Kleidung)'], columns=['Durchschnitt CO2 Deutschland', 'Dein CO2'])
+    #chart_data = pd.DataFrame(data=d, index=['Nahrung', 'Wohnen', 'Mobilität', 'Konsum (Kleidung)'])
+    
+    #st.write(chart_data)
+    #st.bar_chart(chart_data)
+    
+    df = pd.DataFrame(
+        [["Nahrung", 640,co2_akt_nach_kat[0]], ["Wohnen", 2730,co2_akt_nach_kat[1]], ["Mobilität", 3125,co2_akt_nach_kat[2]],["Konsum (Kleidung)",507,co2_akt_nach_kat[3]]],
+        columns=["Kategorie","Durschnitt CO2 Deutschland", "Dein CO2"])
+    fig = px.bar(df, x="Kategorie", y=["Durschnitt CO2 Deutschland", "Dein CO2"], barmode='group', height=400)
+    st.plotly_chart(fig)
+    
+    st.write("""
+        ### Hier kannst du angeben, wie wichtig dir die folgenden Aspekte sind (je höher der Wert desto wichtiger):
+    """)
+    remaining_prefs=[1,2,3,4,5,6]
+    col1, col2, col3, col4 = st.beta_columns(4)
+    val_nahrung1 = col1.selectbox('Fleisch- und Fischkonsum beibehalten', remaining_prefs)
+    val_wohnen = col2.selectbox('Wohnbedingungen beibehalten', remaining_prefs)
+    val_mob1 = col3.selectbox('Autokilometer beibehalten',remaining_prefs)
+    val_mob2 = col3.selectbox('Flugstunden beibehalten', remaining_prefs)
+    val_konsum1 = col4.selectbox('Konsum beibehalten', remaining_prefs)
+    
+    st.write("""
+        ### Hier kannst du Minimalwerte für die einzelnen Aspekte setzen:
+    """)
+    col1, col2, col3, col4 = st.beta_columns(4)
+    min_val_nahrung1 = col1.text_input(label= 'Minimaler Fleisch- und Fischkonsum in kg pro Woche',value=0)
+    min_val_wohnen = col2.text_input(label='Minimale Zimmertemperatur', value=18)
+    min_val_mob1 = col3.text_input(label='Minimale Autokilometer pro Woche', value=0)
+    min_val_mob2 = col3.text_input(label='Minimale Flugstunden in 4 Jahren', value=0)
+    min_val_konsum1 = col4.text_input(label='Minimale Anzahl an neuen Kleidungsstücken im Jahr', value=0)
+    
+    st.write("""
+        Nun kannst du schauen, auf wie viel Prozent du deinen Verbrauch in den genannten Kategorien senken musst, sodass dein CO2 Fußabdruck
+        unter der von der Pariser Klimakonferenz geforderten Menge ist. 
+        ### Auf welches Jahr soll dein Fußabdruck minimiert werden?
+    """)
+    
+    jahr = st.slider(label='Jahr', min_value=2021,max_value=2050,step=1)
+    
+    
+    
+    # Arrays in denen die Benutzereingaben gespeichert werden
+    akt = [float(nahrung1),nahrung2,wohnen1,float(wohnen2),float(mob1),float(mob2),float(konsum1)]
+    pref = [float(val_nahrung1),float(val_wohnen),float(val_mob1),float(val_mob2),float(val_konsum1)]
+    min_vals = [float(min_val_nahrung1),float(min_val_wohnen), float(min_val_mob1), float(min_val_mob2), float(min_val_konsum1)]
+    
+    
+    solution = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung)
 
-# Sidebar sind Abfragen nach aktuellem Zustand
-st.sidebar.header('Eingabeparameter zur Berechnung deines aktuellen CO2-Fußabdrucks')
-
-st.sidebar.markdown("***")
-st.sidebar.write("""
-    ### Kategorie: Ernährung
-""")
-nahrung1 = st.sidebar.text_input(label='Wie viel Kilogramm Fleisch und Fisch konsumierst du wöchentlich?', value=0)
-nahrung2 = st.sidebar.radio('Wie wichtig ist dir, dass die Lebensmittel regional sind?',['sehr wichtig','manchmal wichtig','garnicht wichtig'])
-st.sidebar.markdown("***")
-st.sidebar.write("""
-    ### Kategorie: Wohnen
-""")
-wohnen1 = st.sidebar.slider(label='Auf wie viel Grad heizt du deine Wohnung normalerweise?', min_value=18,max_value=24,step=1)
-wohnen2 = st.sidebar.text_input(label='Wie viel Quadratmeter Wohnfläche hast du zur Verfügung (pro Person)?', value=0)
-st.sidebar.markdown("***")
-st.sidebar.write("""
-    ### Kategorie: Mobilität
-""")
-mob1 = st.sidebar.text_input(label='Wie viel Kilometer fährst du pro Jahr mit dem Auto (pro Person)?', value=0)
-mob2 = st.sidebar.text_input(label='Wie viele Stunden bist du in den letzten vier Jahren geflogen?', value=0)
-st.sidebar.markdown("***")
-st.sidebar.write("""
-    ### Kategorie: Konsum
-""")
-konsum1 = st.sidebar.text_input(label='Wie viele Kleidungsstücke kaufst du im Jahr?', value=0)
-
-c1,c2,c3 = st.beta_columns((1,5,1))
-image1= Image.open('Umweltschutz1.jpg')
-c2.image(image1, width=700, clamp=False, channels='RGB', output_format='auto')
-
-# Berechne den aktuellen fußabdruck
-akt = [float(nahrung1),nahrung2,wohnen1,float(wohnen2),float(mob1),float(mob2),float(konsum1)]
-akt_abdruck, co2_akt, co2_akt_nach_kat, faktor_nahrung = akt_abdruck(akt)
-
-st.write("""
-    ### Zunächst ein paar Informationen zu deinem aktuellen Fußabdruck.
-""")
-st.write('Dein Fußabdruck beträgt    '+str(round(akt_abdruck))+"""    Kilogramm. Im Vergleich dazu lag der durchschnittliche CO2 Fußabdruck
-         in Deutschland im Jahr 2019 bei ca. 7900 Kilogramm. Der weltweite Fußabdruck bemisst sogar nur 4800 Kilogramm.""")
-
-
-d = {'Durchschnitt Deutschland CO2': [640,2730,3125,507], 'Dein CO2':co2_akt_nach_kat}
-#chart_data = pd.DataFrame(data=d, index=['Nahrung', 'Wohnen', 'Mobilität', 'Konsum (Kleidung)'], columns=['Durchschnitt CO2 Deutschland', 'Dein CO2'])
-chart_data = pd.DataFrame(data=d, index=['Nahrung', 'Wohnen', 'Mobilität', 'Konsum (Kleidung)'])
-
-st.write(chart_data)
-st.bar_chart(chart_data)
-
-# df = pd.DataFrame(
-#     [["Nahrung", 640,co2_akt_nach_kat[0]], ["Wohnen", 2730,co2_akt_nach_kat[1]], ["Mobilität", 3125,co2_akt_nach_kat[2]],["Konsum (Kleidung)",507,co2_akt_nach_kat[3]]],
-#     columns=["Kategorie","Durschnitt CO2 Deutschland", "Dein CO2"])
-# fig = px.bar(df, x="Kategorie", y=["Durschnitt CO2 Deutschland", "Dein CO2"], barmode='group', height=400)
-# # st.dataframe(df) # if need to display dataframe
-# st.plotly_chart(fig)
-
-st.write("""
-    ### Hier kannst du angeben, wie wichtig dir die folgenden Aspekte sind (je höher der Wert desto wichtiger):
-""")
-remaining_prefs=[1,2,3,4,5,6]
-col1, col2, col3, col4 = st.beta_columns(4)
-val_nahrung1 = col1.selectbox('Fleisch- und Fischkonsum beibehalten', remaining_prefs)
-val_wohnen = col2.selectbox('Wohnbedingungen beibehalten', remaining_prefs)
-val_mob1 = col3.selectbox('Autokilometer beibehalten',remaining_prefs)
-val_mob2 = col3.selectbox('Flugstunden beibehalten', remaining_prefs)
-val_konsum1 = col4.selectbox('Konsum beibehalten', remaining_prefs)
-
-st.write("""
-    ### Hier kannst du Minimalwerte für die einzelnen Aspekte setzen:
-""")
-col1, col2, col3, col4 = st.beta_columns(4)
-min_val_nahrung1 = col1.text_input(label= 'Minimaler Fleisch- und Fischkonsum in kg pro Woche',value=0)
-min_val_wohnen = col2.text_input(label='Minimale Zimmertemperatur', value=18)
-min_val_mob1 = col3.text_input(label='Minimale Autokilometer pro Woche', value=0)
-min_val_mob2 = col3.text_input(label='Minimale Flugstunden in 4 Jahren', value=0)
-min_val_konsum1 = col4.text_input(label='Minimale Anzahl an neuen Kleidungsstücken im Jahr', value=0)
-
-st.write("""
-    Nun kannst du schauen, auf wie viel Prozent du deinen Verbrauch in den genannten Kategorien senken musst, sodass dein CO2 Fußabdruck
-    unter der von der Pariser Klimakonferenz geforderten Menge ist. 
-    ### Auf welches Jahr soll dein Fußabdruck minimiert werden?
-""")
-
-jahr = st.slider(label='Jahr', min_value=2021,max_value=2050,step=1)
-
-
-
-# Arrays in denen die Benutzereingaben gespeichert werden
-akt = [float(nahrung1),nahrung2,wohnen1,float(wohnen2),float(mob1),float(mob2),float(konsum1)]
-pref = [float(val_nahrung1),float(val_wohnen),float(val_mob1),float(val_mob2),float(val_konsum1)]
-min_vals = [float(min_val_nahrung1),float(min_val_wohnen), float(min_val_mob1), float(min_val_mob2), float(min_val_konsum1)]
-
-
-solution = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung)
-print(solution)
-
-
-
-st.write('Reduziere deinen ökologischen Fußabdruck, indem du deinen Verbrauch auf die folgenden Prozente reduzierst:', solution, round(akt_abdruck))
-st.write('Reduziere deinen Fleischkonsum auf    '+str(round(solution[0],4)*100)+'%.')
-st.write('Reduziere deinen Zimmerwärme auf    '+str(round(solution[1],4)*100)+'%.')
-st.write('Reduziere deine Autokilometer auf    '+str(round(solution[2],4)*100)+'%.')
-st.write('Reduziere deine Flugstunden auf    '+str(round(solution[3],4)*100)+'%.')
-st.write('Reduziere deinen gekauften Kleidungsstücke auf    '+str(round(solution[4],4)*100)+'%.')
-
-
-
-
+    
+    st.write('Reduziere deinen ökologischen Fußabdruck, indem du deinen Verbrauch auf die folgenden Prozente reduzierst:')
+    st.write('Reduziere deinen Fleischkonsum auf    '+str(round(solution[0],4)*100)+'%.')
+    st.write('Reduziere deinen Zimmerwärme auf    '+str(round(solution[1],4)*100)+'%.')
+    st.write('Reduziere deine Autokilometer auf    '+str(round(solution[2],4)*100)+'%.')
+    st.write('Reduziere deine Flugstunden auf    '+str(round(solution[3],4)*100)+'%.')
+    st.write('Reduziere deinen gekauften Kleidungsstücke auf    '+str(round(solution[4],4)*100)+'%.')
+    
+        
+# Motivation --------------------------------------------------------------------------------------------------------------------
+elif navigation == 'Motivation':
+    st.write("""
+             ## Motivation und Ziel des Projekts
+             Im November 2016 beschloss das Bundeskabinett den Klimaschutzplan 2050. Darin sind die Klimaschutzziele der Bundesrepublik Deutschland festgelegt, die im Einklang mit dem Pariser Übereinkommen stehen. So sollen die Treibhausgasemissionen bis 2050 um 80 bis 95 Prozent reduziert werden im Vergleich zum Wert von 1990. Die Einhaltung dieses Ziels stellt nicht nur die Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch großen Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf Einschränkungen einlassen müssen und einen Beitrag zum Klimaschutz leisten müssen. Doch wie könnten diese Einschränkungen für die Bevölkerung von Deutschland aussehen? 
+             Unsere Modellierung basiert auf dem bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. 
+             """)
+else:
+    
+    link = '[GitHub](http://github.com)'
+    st.markdown(link, unsafe_allow_html=True)
+    
+    
+    if st.button('Say hello'):
+        st.write('Why hello there')
+    else:   
+        st.write('Goodbye')
+        
+    agree = st.checkbox('I agree')
+    if agree:
+        st.write('Great!')
+        

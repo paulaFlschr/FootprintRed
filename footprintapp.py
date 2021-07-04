@@ -180,7 +180,7 @@ if navigation == 'Startseite':
     col1, col2, col3, col4 = st.beta_columns(4)
     min_val_nahrung1 = col1.text_input(label= 'Minimaler Fleisch- und Fischkonsum in kg pro Woche',value=0)
     min_val_wohnen = col2.text_input(label='Minimale Zimmertemperatur', value=18)
-    min_val_mob1 = col3.text_input(label='Minimale Autokilometer pro Woche', value=0)
+    min_val_mob1 = col3.text_input(label='Minimale Autokilometer pro Jahr', value=0)
     min_val_mob2 = col3.text_input(label='Minimale Flugstunden in 4 Jahren', value=0)
     min_val_konsum1 = col4.text_input(label='Minimale Anzahl an neuen Kleidungsstücken im Jahr', value=0)
     

@@ -100,7 +100,7 @@ c1.write("""
         # Fußabdruck - Optimierung
         ## Optimiere deinen ökologischen Fußabdruck
     """)
-navigation = c2.selectbox('', ["Startseite","Fußabdruck-Rechner", "Persönlicher Fußabdruck", "Maximum Berechnung", "Versuche"])
+navigation = c2.selectbox('', ["Startseite","Fußabdruck-Rechner", "Umsetzung & Mathematischer Hintergrund", "Persönlicher Fußabdruck", "Budget Berechnung", "Impressum"])
 st.markdown("***")
 hide_footer_style = """
     <style>
@@ -111,10 +111,13 @@ st.markdown(hide_footer_style, unsafe_allow_html=True)
 #==============================================================================================================================
 # Motivation --------------------------------------------------------------------------------------------------------------------
 if navigation == 'Startseite':
+    c1,c2,c3 = st.beta_columns([1,6,1])
+    imagestart= Image.open('Startseite.PNG')
+    c2.image(imagestart,width=1000, clamp=False, channels='RGB', output_format='auto')
+    
+
+elif navigation == 'Umsetzung & Mathematischer Hintergrund':
     st.write("""
-             ## Motivation und Ziel des Projekts
-             Im November 2016 beschloss das Bundeskabinett den Klimaschutzplan 2050. Darin sind die Klimaschutzziele der Bundesrepublik Deutschland festgelegt, die im Einklang mit dem Pariser Übereinkommen stehen. So sollen die Treibhausgasemissionen bis 2050 um 80 bis 95 Prozent reduziert werden im Vergleich zum Wert von 1990. Die Einhaltung dieses Ziels stellt nicht nur die Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch großen Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf Einschränkungen einlassen müssen und einen Beitrag zum Klimaschutz leisten müssen. Doch wie könnten diese Einschränkungen für die Bevölkerung von Deutschland aussehen? 
-             Unsere Modellierung basiert auf dem bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. 
              ## Umsetzung und Grundsätze der Modellierung
              Neben der Auskunft über den persönlichen CO2-Verbrauch pro Jahr soll mit der Modellierung eine Handlungsempfehlung gegeben werden, wie das Verhalten verändert könnte, um das CO2-Ziel einzuhalten. Unser Ziel ist es, die Eingabe für den Benutzer möglichst einfach zu gestalten. Deshalb ist es in einigen Bereichen notwendig Verallgemeinerungen zu treffen. Zur Berechnung des persönlichen CO2-Verbrauchs pro Jahr sollen folgende Bereiche berücksichtig werden:
              """)
@@ -126,8 +129,13 @@ if navigation == 'Startseite':
              Dabei werden zu diesen Bereichen vom Benutzer bestimmte Angaben abgefragt, die die Höhe des Verbrauchs bestimmen. 
              Damit die Empfehlungen für das künftige Verhalten zu den Bedürfnissen des Benutzers passen, können ebenfalls Angaben dazu gemacht werden, wie wichtig es dem Benutzer ist, bestimmte Aspekte beizubehalten. So soll sichergestellt werden, dass der Vorschlag zur Anpassung des persönlichen Verhaltens auch umgesetzt werden kann. 
              """)
-
+    
+    
 elif navigation == 'Fußabdruck-Rechner':
+    st.write("""
+             Im November 2016 beschloss das Bundeskabinett den Klimaschutzplan 2050. Darin sind die Klimaschutzziele der Bundesrepublik Deutschland festgelegt, die im Einklang mit dem Pariser Übereinkommen stehen. So sollen die Treibhausgasemissionen bis 2050 um 80 bis 95 Prozent reduziert werden im Vergleich zum Wert von 1990. Die Einhaltung dieses Ziels stellt nicht nur die Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch großen Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf Einschränkungen einlassen müssen und einen Beitrag zum Klimaschutz leisten müssen. Doch wie könnten diese Einschränkungen für die Bevölkerung von Deutschland aussehen? 
+             Unsere Modellierung basiert auf dem bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. """)
+             
     # Sidebar ----------------------------------------------------------------------------------------------------------------------
     # Sidebar sind Abfragen nach aktuellem Zustand
     st.sidebar.header('Eingabeparameter zur Berechnung deines aktuellen CO2-Fußabdrucks')
@@ -304,7 +312,7 @@ elif navigation == 'Persönlicher Fußabdruck':
     image11= Image.open('Formel_Konsum.PNG')
     c2.image(image11, width=700, clamp=False, channels='RGB', output_format='auto')
     
-elif navigation == "Maximum Berechnung":
+elif navigation == "Budget Berechnung":
     st.write("""
              ## Berechnung des pro Kopf Budgets (Deutschland)
              Zunächst soll der Anteil der Bevölkerung am CO2-Gesamtverbrauch von Deutschland bestimmt werden. Dieser ermöglicht es uns im weiteren Verlauf ausgehend von künftigen Klimazielen des Landes das persönliche CO2-Budget pro Kopf zu berechnen und Handlungsempfehlungen zur Reduzierung des persönlichen CO2-Verbrauchs auszusprechen. 
@@ -331,6 +339,7 @@ elif navigation == "Maximum Berechnung":
     c2.image(image16, width=300, clamp=False, channels='RGB', output_format='auto')
     st.write("""Dieser Wert sagt aus, dass der durch die Bevölkerung verursachte CO2-Verbrauch ungefähr 83% ausmacht. 
              Er erlaubt es uns, für künftige bundesweite CO2-Budgets ein pro Kopf Budget vorherzusagen. """)
+    st.markdown("***")
     st.write("""
              ## Künftige CO2-Budgets
              Damit künftige pro Kopf CO2-Budgets berechnet werden können, soll hier das zu Grunde liegende Modell vorgestellt werden. Die Daten basieren auf dem Klimaschutzplan 2050, der vom Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU) veröffentlicht wurde. Demnach sollen ausgehend vom Jahr 1990 bis 2030 die CO2-Emissionen mindestens um 55%, bis 2040 um 70% und bis 2050 um 80%-95% gesenkt werden. Die sich aus diesen Zielen ergebenden CO2-Budgets sind in Abbildung 1 dargestellt.  
@@ -342,16 +351,9 @@ elif navigation == "Maximum Berechnung":
     
 else:
     
-    link = '[GitHub](http://github.com)'
-    st.markdown(link, unsafe_allow_html=True)
+    #link = '[GitHub](http://github.com)'
+    #st.markdown(link, unsafe_allow_html=True)
+    st.write("von Lena Bill & Paula Fleischer")
     
     
-    if st.button('Say hello'):
-        st.write('Why hello there')
-    else:   
-        st.write('Goodbye')
-        
-    agree = st.checkbox('I agree')
-    if agree:
-        st.write('Great!')
         

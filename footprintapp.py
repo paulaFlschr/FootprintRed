@@ -115,13 +115,17 @@ if navigation == 'Startseite':
              ## Motivation und Ziel des Projekts
              Im November 2016 beschloss das Bundeskabinett den Klimaschutzplan 2050. Darin sind die Klimaschutzziele der Bundesrepublik Deutschland festgelegt, die im Einklang mit dem Pariser Übereinkommen stehen. So sollen die Treibhausgasemissionen bis 2050 um 80 bis 95 Prozent reduziert werden im Vergleich zum Wert von 1990. Die Einhaltung dieses Ziels stellt nicht nur die Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch großen Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf Einschränkungen einlassen müssen und einen Beitrag zum Klimaschutz leisten müssen. Doch wie könnten diese Einschränkungen für die Bevölkerung von Deutschland aussehen? 
              Unsere Modellierung basiert auf dem bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. 
-             ## Umsetzung und Grundsetze der Modellierung
+             ## Umsetzung und Grundsätze der Modellierung
              Neben der Auskunft über den persönlichen CO2-Verbrauch pro Jahr soll mit der Modellierung eine Handlungsempfehlung gegeben werden, wie das Verhalten verändert könnte, um das CO2-Ziel einzuhalten. Unser Ziel ist es, die Eingabe für den Benutzer möglichst einfach zu gestalten. Deshalb ist es in einigen Bereichen notwendig Verallgemeinerungen zu treffen. Zur Berechnung des persönlichen CO2-Verbrauchs pro Jahr sollen folgende Bereiche berücksichtig werden:
              """)
     st.write("1.	Nahrung")
     st.write("2.	Wohnen")
     st.write("3.	Mobilität")
     st.write("4.	Konsum")
+    st.write("""
+             Dabei werden zu diesen Bereichen vom Benutzer bestimmte Angaben abgefragt, die die Höhe des Verbrauchs bestimmen. 
+             Damit die Empfehlungen für das künftige Verhalten zu den Bedürfnissen des Benutzers passen, können ebenfalls Angaben dazu gemacht werden, wie wichtig es dem Benutzer ist, bestimmte Aspekte beizubehalten. So soll sichergestellt werden, dass der Vorschlag zur Anpassung des persönlichen Verhaltens auch umgesetzt werden kann. 
+             """)
 
 elif navigation == 'Fußabdruck-Rechner':
     # Sidebar ----------------------------------------------------------------------------------------------------------------------
@@ -321,7 +325,20 @@ elif navigation == "Maximum Berechnung":
     c1,c2,c3 = st.beta_columns([1,3,1])
     image15= Image.open('Tab2_Einwohner.PNG')
     c2.image(image15, width=700, clamp=False, channels='RGB', output_format='auto')
-    
+    st.write("Zuletzt wird der Mittelwert (\bar{P_{Bev}}) gebildet über alle so bestimmten Anteile des CO2-Verbrauchs der Bevölkerung. ")
+    c1,c2,c3 = st.beta_columns([2,3,1])
+    image16= Image.open('Wert_Bev.PNG')
+    c2.image(image16, width=300, clamp=False, channels='RGB', output_format='auto')
+    st.write("""Dieser Wert sagt aus, dass der durch die Bevölkerung verursachte CO2-Verbrauch ungefähr 83% ausmacht. 
+             Er erlaubt es uns, für künftige bundesweite CO2-Budgets ein pro Kopf Budget vorherzusagen. """)
+    st.write("""
+             ## Künftige CO2-Budgets
+             Damit künftige pro Kopf CO2-Budgets berechnet werden können, soll hier das zu Grunde liegende Modell vorgestellt werden. Die Daten basieren auf dem Klimaschutzplan 2050, der vom Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU) veröffentlicht wurde. Demnach sollen ausgehend vom Jahr 1990 bis 2030 die CO2-Emissionen mindestens um 55%, bis 2040 um 70% und bis 2050 um 80%-95% gesenkt werden. Die sich aus diesen Zielen ergebenden CO2-Budgets sind in Abbildung 1 dargestellt.  
+             """)
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image17= Image.open('Emissionsziel.PNG')
+    c2.image(image17, width=700, clamp=False, channels='RGB', output_format='auto')
+    st.write("Mit dieser Datengrundlage und dem zuvor ermittelten Anteil des CO2-Verbrauches der Bevölkerung kann der pro Kopf Ausstoß für künftige Szenarien ermittelt werden. ")
     
 else:
     

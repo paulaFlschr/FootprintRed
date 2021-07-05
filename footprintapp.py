@@ -36,7 +36,7 @@ def akt_abdruck(akt):
         faktor_temp = 1.3
     
     # Berechne die aktuellen co2 werte
-    co2_nahrung1 = akt[0]*7.34*53*faktor_nahrung
+    co2_nahrung1 = akt[0]*7.21*53*faktor_nahrung
     co2_nahrung2 = (99.5*0.36+73.6*0.437+159.6*7.34+77.4*0.82+55*3.23+14.5*1.931)*faktor_nahrung
     co2_wohnen_strom = 0.429*akt[3]*80
     co2_wohnen_temp = 0.27* akt[3] *80*faktor_temp
@@ -65,7 +65,7 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung):
     else:
         max_co2 =  -184*(jahr-2040)+3830
         
-    co2_essen = [0.153*faktor_nahrung, 0.437*faktor_nahrung, 1.795*faktor_nahrung, 0.836*faktor_nahrung, 0.199*faktor_nahrung, 1.931*faktor_nahrung]
+    co2_essen = [0.36*faktor_nahrung, 0.437*faktor_nahrung, 7.34*faktor_nahrung, 0.82*faktor_nahrung, 3.23*faktor_nahrung, 1.931*faktor_nahrung]
     
     # Generiere Lineares Programm------------------------------------------------
     c = [-pref[0],-pref[1],-pref[2],-pref[3],-pref[4],0,0,0,0,0,0,0]
@@ -100,7 +100,7 @@ c1.write("""
         # Fußabdruck - Optimierung
         ## Optimiere deinen ökologischen Fußabdruck
     """)
-navigation = c2.selectbox('', ["Startseite","Motivation", "Versuche", "Berechnung persönlicher Fußabdruck"])
+navigation = c2.selectbox('', ["Startseite","Fußabdruck-Rechner", "Persönlicher Fußabdruck", "Maximum Berechnung", "Versuche"])
 st.markdown("***")
 hide_footer_style = """
     <style>
@@ -109,7 +109,15 @@ hide_footer_style = """
 st.markdown(hide_footer_style, unsafe_allow_html=True)
 
 #==============================================================================================================================
+# Motivation --------------------------------------------------------------------------------------------------------------------
 if navigation == 'Startseite':
+    st.write("""
+             ## Motivation und Ziel des Projekts
+             Im November 2016 beschloss das Bundeskabinett den Klimaschutzplan 2050. Darin sind die Klimaschutzziele der Bundesrepublik Deutschland festgelegt, die im Einklang mit dem Pariser Übereinkommen stehen. So sollen die Treibhausgasemissionen bis 2050 um 80 bis 95 Prozent reduziert werden im Vergleich zum Wert von 1990. Die Einhaltung dieses Ziels stellt nicht nur die Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch großen Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf Einschränkungen einlassen müssen und einen Beitrag zum Klimaschutz leisten müssen. Doch wie könnten diese Einschränkungen für die Bevölkerung von Deutschland aussehen? 
+             Unsere Modellierung basiert auf dem bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. 
+             """)
+
+elif navigation == 'Fußabdruck-Rechner':
     # Sidebar ----------------------------------------------------------------------------------------------------------------------
     # Sidebar sind Abfragen nach aktuellem Zustand
     st.sidebar.header('Eingabeparameter zur Berechnung deines aktuellen CO2-Fußabdrucks')
@@ -162,7 +170,7 @@ if navigation == 'Startseite':
     #st.bar_chart(chart_data)
     
     df = pd.DataFrame(
-        [["Nahrung", 640,co2_akt_nach_kat[0]], ["Wohnen", 2730,co2_akt_nach_kat[1]], ["Mobilität", 3125,co2_akt_nach_kat[2]],["Konsum (Kleidung)",507,co2_akt_nach_kat[3]]],
+        [["Nahrung", 1704,co2_akt_nach_kat[0]], ["Wohnen", 2730,co2_akt_nach_kat[1]], ["Mobilität", 3125,co2_akt_nach_kat[2]],["Konsum (Kleidung)",507,co2_akt_nach_kat[3]]],
         columns=["Kategorie","Durschnitt CO2 Deutschland", "Dein CO2"])
     fig = px.bar(df, x="Kategorie", y=["Durschnitt CO2 Deutschland", "Dein CO2"], barmode='group', height=400)
     st.plotly_chart(fig)
@@ -214,16 +222,9 @@ if navigation == 'Startseite':
     st.write('Reduziere deine Flugstunden auf    '+str(round(solution[3],4)*100)+'%.')
     st.write('Reduziere deinen gekauften Kleidungsstücke auf    '+str(round(solution[4],4)*100)+'%.')
     
-        
-# Motivation --------------------------------------------------------------------------------------------------------------------
-elif navigation == 'Motivation':
-    st.write("""
-             ## Motivation und Ziel des Projekts
-             Im November 2016 beschloss das Bundeskabinett den Klimaschutzplan 2050. Darin sind die Klimaschutzziele der Bundesrepublik Deutschland festgelegt, die im Einklang mit dem Pariser Übereinkommen stehen. So sollen die Treibhausgasemissionen bis 2050 um 80 bis 95 Prozent reduziert werden im Vergleich zum Wert von 1990. Die Einhaltung dieses Ziels stellt nicht nur die Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch großen Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf Einschränkungen einlassen müssen und einen Beitrag zum Klimaschutz leisten müssen. Doch wie könnten diese Einschränkungen für die Bevölkerung von Deutschland aussehen? 
-             Unsere Modellierung basiert auf dem bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. 
-             """)
+    
 # Pro Kopf Budget ---------------------------------------------------------------------------------------------------------
-elif navigation == 'Berechnung persönlicher Fußabdruck':
+elif navigation == 'Persönlicher Fußabdruck':
     st.write("""
              ## Berechnung des persönlichen CO2-Verbrauchs
              Zur Ermittlung des pro Kopf CO2-Verbrauch wird der persönliche Gesamtverbrauch in verschiedene Bereiche unterteilt. Auf der Grundlage des persönlichen Verhaltens wird der individuelle CO2-Verbrauch berechnet. Darüber hinaus wird eine Handlungsempfehlung ausgegeben, die die Reduzierung gewisser Aspekte vorschlägt, um das persönliche CO2-Budget einhalten zu können. 
@@ -269,6 +270,52 @@ elif navigation == 'Berechnung persönlicher Fußabdruck':
     c2.write("1. Wohnfläche pro Person")
     c2.write("2. Eingestellte Raumtemperatur")
     st.write("""Mit diesen beiden Größen wird der CO2-Verbrauch des Benutzers für den Aspekt Wohnen durch die folgende Beziehung berechnet.""")
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image8= Image.open('Formel_Wohnen.png')
+    c2.image(image8, width=700, clamp=False, channels='RGB', output_format='auto')
+    
+    st.markdown("***")
+    st.write("## Mobilität")
+    st.write("Die Datengrundlage für die Berechnung des persönlichen CO2-Verbrauchs durch den Aspekt Mobilität bildet die folgende Tabelle. ")
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image9= Image.open('Tab6_Mobilität.png')
+    c2.image(image9, width=700, clamp=False, channels='RGB', output_format='auto')
+    
+    st.markdown("***")
+    st.write("## Konsum")
+    st.write("Die Datengrundlage für die Berechnung des persönlichen CO2-Verbrauchs durch den Konsum bildet die folgende Tabelle. ")
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image10= Image.open('Tab7_Konsum.png')
+    c2.image(image10, width=700, clamp=False, channels='RGB', output_format='auto')
+    st.write("Der Benutzer soll dabei folgende Angabe zu seinem Konsumverhalten machen:")
+    st.write("1. Anzahl gekaufte Kleidungsstücke pro Jahr.")
+    st.write("Unter Berücksichtigung dieser Angabe wird der persönliche CO2-Verbrauch durch den Aspekt Konsum durch den folgenden Zusammenhang berechnet.")
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image11= Image.open('Formel_Konsum.png')
+    c2.image(image11, width=700, clamp=False, channels='RGB', output_format='auto')
+    
+elif navigation == "Maximum Berechnung":
+    st.write("""
+             ## Berechnung des pro Kopf Budgets (Deutschland)
+             Zunächst soll der Anteil der Bevölkerung am CO2-Gesamtverbrauch von Deutschland bestimmt werden. Dieser ermöglicht es uns im weiteren Verlauf ausgehend von künftigen Klimazielen des Landes das persönliche CO2-Budget pro Kopf zu berechnen und Handlungsempfehlungen zur Reduzierung des persönlichen CO2-Verbrauchs auszusprechen. 
+            Die folgende Tabelle bildet die Grundlage der Berechnung des Anteils der Bevölkerung am CO2-Gesamtverbrauch von Deutschland.
+            """)
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image12= Image.open('Tab1_Einwohnerzahlen.png')
+    c2.image(image12, width=700, clamp=False, channels='RGB', output_format='auto')
+    st.write("Zunächst kann nun der gesamte durch die Bevölkerung verursachte CO2-Verbrauch (A_{Bev}) für die entsprechenden Jahre aus Tab. 1 berechnet werden. ")
+    c1,c2,c3 = st.beta_columns([2,3,1])
+    image13= Image.open('Formel_Bev1.png')
+    c2.image(image13, width=300, clamp=False, channels='RGB', output_format='auto')
+    st.write("Somit kann der prozentuale Anteil der durch die Bevölkerung verursachten Emissionen (P_{Bev}) an den bundesweiten Emissionen bestimmt werden.")
+    c1,c2,c3 = st.beta_columns([2,3,1])
+    image14= Image.open('Formel_Bev2.png')
+    c2.image(image14, width=300, clamp=False, channels='RGB', output_format='auto')
+    st.write("Die gemäß dieser Formeln berechneten Werte sind nachfolgend dargelegt. ")
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image15= Image.open('Tab2_Einwohner.png')
+    c2.image(image15, width=700, clamp=False, channels='RGB', output_format='auto')
+    
     
 else:
     

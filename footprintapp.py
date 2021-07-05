@@ -115,7 +115,13 @@ if navigation == 'Startseite':
              ## Motivation und Ziel des Projekts
              Im November 2016 beschloss das Bundeskabinett den Klimaschutzplan 2050. Darin sind die Klimaschutzziele der Bundesrepublik Deutschland festgelegt, die im Einklang mit dem Pariser Übereinkommen stehen. So sollen die Treibhausgasemissionen bis 2050 um 80 bis 95 Prozent reduziert werden im Vergleich zum Wert von 1990. Die Einhaltung dieses Ziels stellt nicht nur die Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch großen Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf Einschränkungen einlassen müssen und einen Beitrag zum Klimaschutz leisten müssen. Doch wie könnten diese Einschränkungen für die Bevölkerung von Deutschland aussehen? 
              Unsere Modellierung basiert auf dem bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. 
+             ## Umsetzung und Grundsetze der Modellierung
+             Neben der Auskunft über den persönlichen CO2-Verbrauch pro Jahr soll mit der Modellierung eine Handlungsempfehlung gegeben werden, wie das Verhalten verändert könnte, um das CO2-Ziel einzuhalten. Unser Ziel ist es, die Eingabe für den Benutzer möglichst einfach zu gestalten. Deshalb ist es in einigen Bereichen notwendig Verallgemeinerungen zu treffen. Zur Berechnung des persönlichen CO2-Verbrauchs pro Jahr sollen folgende Bereiche berücksichtig werden:
              """)
+    st.write("1.	Nahrung")
+    st.write("2.	Wohnen")
+    st.write("3.	Mobilität")
+    st.write("4.	Konsum")
 
 elif navigation == 'Fußabdruck-Rechner':
     # Sidebar ----------------------------------------------------------------------------------------------------------------------

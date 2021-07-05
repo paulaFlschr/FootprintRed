@@ -112,7 +112,7 @@ st.markdown(hide_footer_style, unsafe_allow_html=True)
 # Motivation --------------------------------------------------------------------------------------------------------------------
 if navigation == 'Startseite':
     c1,c2,c3 = st.beta_columns([1,6,1])
-    imagestart= Image.open('Startseite.PNG')
+    imagestart= Image.open('Startseite.png')
     c2.image(imagestart,width=1000, clamp=False, channels='RGB', output_format='auto')
     
 

@@ -36,8 +36,8 @@ def akt_abdruck(akt):
         faktor_temp = 1.3
     
     # Berechne die aktuellen co2 werte
-    co2_nahrung1 = akt[0]*4.85*53*faktor_nahrung
-    co2_nahrung2 = (99.5*0.153+73.6*0.437+159.6*1.795+77.4*0.836+55*0.199+14.5*1.931)*faktor_nahrung
+    co2_nahrung1 = akt[0]*7.34*53*faktor_nahrung
+    co2_nahrung2 = (99.5*0.36+73.6*0.437+159.6*7.34+77.4*0.82+55*3.23+14.5*1.931)*faktor_nahrung
     co2_wohnen_strom = 0.429*akt[3]*80
     co2_wohnen_temp = 0.27* akt[3] *80*faktor_temp
     co2_wohnen = co2_wohnen_strom + co2_wohnen_temp
@@ -88,7 +88,6 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung):
     #Löse lineares Programm
     res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=[(0,1),(0,1),(0,1),(0,1),(0,1),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None)], method='simplex')
         
-    print(res.x)
     return res.x
        
 # 
@@ -101,8 +100,13 @@ c1.write("""
         # Fußabdruck - Optimierung
         ## Optimiere deinen ökologischen Fußabdruck
     """)
-navigation = c2.selectbox('', ["Startseite","Motivation", "Versuche"])
+navigation = c2.selectbox('', ["Startseite","Motivation", "Versuche", "Berechnung persönlicher Fußabdruck"])
 st.markdown("***")
+hide_footer_style = """
+    <style>
+    .reportview-container .main footer {visibility: hidden;}    
+    """
+st.markdown(hide_footer_style, unsafe_allow_html=True)
 
 #==============================================================================================================================
 if navigation == 'Startseite':
@@ -218,6 +222,54 @@ elif navigation == 'Motivation':
              Im November 2016 beschloss das Bundeskabinett den Klimaschutzplan 2050. Darin sind die Klimaschutzziele der Bundesrepublik Deutschland festgelegt, die im Einklang mit dem Pariser Übereinkommen stehen. So sollen die Treibhausgasemissionen bis 2050 um 80 bis 95 Prozent reduziert werden im Vergleich zum Wert von 1990. Die Einhaltung dieses Ziels stellt nicht nur die Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch großen Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf Einschränkungen einlassen müssen und einen Beitrag zum Klimaschutz leisten müssen. Doch wie könnten diese Einschränkungen für die Bevölkerung von Deutschland aussehen? 
              Unsere Modellierung basiert auf dem bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. 
              """)
+# Pro Kopf Budget ---------------------------------------------------------------------------------------------------------
+elif navigation == 'Berechnung persönlicher Fußabdruck':
+    st.write("""
+             ## Berechnung des persönlichen CO2-Verbrauchs
+             Zur Ermittlung des pro Kopf CO2-Verbrauch wird der persönliche Gesamtverbrauch in verschiedene Bereiche unterteilt. Auf der Grundlage des persönlichen Verhaltens wird der individuelle CO2-Verbrauch berechnet. Darüber hinaus wird eine Handlungsempfehlung ausgegeben, die die Reduzierung gewisser Aspekte vorschlägt, um das persönliche CO2-Budget einhalten zu können. 
+             """)
+    st.markdown("***")
+    st.write("""
+             ## Nahrung
+             Die Datengrundlage für die Berechnung des persönlichen CO2-Verbrauchs durch die Nahrung bildet die folgende Tabelle.
+             """)
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image3= Image.open('Tab3_Nahrungswerte.png')
+    c2.image(image3, width=700, clamp=False, channels='RGB', output_format='auto')
+    st.write("Zur Berechnung des persönlichen CO2-Verbrauchs durch die Nahrung werden vom Benutzer folgende Aspekte selbst angegeben:")
+    c1,c2,c3 = st.beta_columns([1,10,1])
+    c2.write("1. Verzehrmenge Fleisch pro Woche in kg 2")
+    c2.write("2. Regionale Lebensmittel")
+    st.write("""Die Berechnung des CO2-Verbrauchs durch die Nahrung werden die durchschnittlichen jährlichen Verzehrmengen mit den entsprechenden CO2-Werten multipliziert und über alle Lebensmittelgruppen aufaddiert, wobei die Verzehrmenge Fleisch vom Benutzer angegeben wird. Entsprechend muss bei der Berechnung diese wöchentliche Angabe durch Multiplikation mit dem Faktor 53 (Anzahl der Wochen pro Jahr) berücksichtigt werden. Damit der Aspekt „2. Regionale und saisonale Lebensmittel“ in die Berechnung einfließen kann, werden gemäß [] die entsprechenden Faktoren aus Tabelle 4 einbezogen. 
+             """)
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image4= Image.open('Tab4_regio.png')
+    c2.image(image4, width=700, clamp=False, channels='RGB', output_format='auto')
+    st.write("""
+             Zunächst wird so der CO2-Wert durch die Nahrung berechnet gemäß dem folgenden Zusammenhang.
+             """)
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image5= Image.open('Formel_Essen.png')
+    c2.image(image5, width=700, clamp=False, channels='RGB', output_format='auto')
+    st.write("""
+             Es soll nicht nur der persönliche CO2-Verbrauch berechnet werden, sondern darüber hinaus soll dem Benutzer vorgeschlagen werden, wie er sein Verhalten verändern kann, um zu einem bestimmten Zeitpunkt unter dem pro Kopf CO2-Budget zu bleiben. In Bezug auf die Nahrung soll dabei, falls nötig und erwünscht die Verzehrmenge Fleisch reduziert werden, da ihr gemäß Tabelle 3 ein hoher CO2-Wert zugeordnet wird. Dabei soll eine Reduzierung der Fleischmenge nicht dazu führen, dass der Benutzer insgesamt weniger isst. Aus diesem Grund wird die reduzierte Menge auf die andren Lebensmittelgruppe verteilt. Um eine möglichst realistische Einschätzung hierzu zu geben, wird der tägliche Kalorien bedarf ausgehend von der angegebenen Verzehrmenge Fleisch und den durchschnittlichen Verzehrmengen der übrigen Lebensmittelgruppen berechnet. Zu der vorgeschlagenen Reduzierung der Verzehrmenge Fleisch wird die entsprechende Kalorienangabe ermittelt und auf die anderen Lebensmittelgruppen verteilt. Grundlage für diese Berechnungen bilden die folgenden Zusammenhänge. 
+             """)
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image6= Image.open('Formel_Fleischersatz.png')
+    c2.image(image6, width=700, clamp=False, channels='RGB', output_format='auto')
+    
+    st.markdown("***")
+    st.write("## Wohnen")
+    st.write("Die Datengrundlage für die Berechnung des persönlichen CO2-Verbrauchs durch den Aspekt Wohnen bildet die folgende Tabelle. ")
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image7= Image.open('Tab5_Wohnen.png')
+    c2.image(image7, width=700, clamp=False, channels='RGB', output_format='auto')
+    st.write("Der berechnete Wert des persönlichen CO2-Verbrauchs durch den Aspekt Wohnen soll personalisiert werden, indem der Benutzer folgende Angaben macht:")
+    c1,c2,c3 = st.beta_columns([1,10,1])
+    c2.write("1. Wohnfläche pro Person")
+    c2.write("2. Eingestellte Raumtemperatur")
+    st.write("""Mit diesen beiden Größen wird der CO2-Verbrauch des Benutzers für den Aspekt Wohnen durch die folgende Beziehung berechnet.""")
+    
 else:
     
     link = '[GitHub](http://github.com)'

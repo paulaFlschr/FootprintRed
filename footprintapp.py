@@ -115,7 +115,7 @@ if navigation == 'Startseite':
     c2.markdown('<div style="text-align: center"><em> <font size = 6><b> Sei du selbst die Veränderung, die du dir wünschst für diese Welt! </b></font> - Mahatma Gandhi</em></div>', unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns([2.5,6,2.5])
     imagestart= Image.open('Startseite.png')
-    c2.image(imagestart,width=1000, clamp=False, channels='RGB', output_format='auto')
+    c2.image(imagestart,use_column_width=True, clamp=False, channels='RGB', output_format='auto')
     
 
 elif navigation == 'Hintergrund: Mathematische Optimierung':

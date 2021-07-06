@@ -93,14 +93,14 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung):
 # 
 # Titellines -----------------------------------------------------------------------------------------------------------------------
 
-st.set_page_config(page_title='Fußabdruck', page_icon=None, layout='wide', initial_sidebar_state='expanded')
+st.set_page_config(page_title='Fußabdruck der Zukunft', page_icon=None, layout='wide', initial_sidebar_state='expanded')
 st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
 c1,c2 = st.beta_columns((7,2))
 c1.write("""
-        # Fußabdruck - Optimierung
+        # Fußabdruck der Zukunft
         ## Optimiere deinen ökologischen Fußabdruck
     """)
-navigation = c2.selectbox('', ["Startseite","Fußabdruck-Rechner", "Umsetzung & Mathematischer Hintergrund", "Persönlicher Fußabdruck", "Budget Berechnung", "Impressum"])
+navigation = c2.selectbox('', ["Startseite","Fußabdruck-Rechner", "Hintergrund: Persönlicher Fußabdruck", "Hintergrund: Budget Berechnung", "Hintergrund: Mathematische Optimierung","Impressum"])
 st.markdown("***")
 hide_footer_style = """
     <style>
@@ -112,19 +112,17 @@ st.markdown(hide_footer_style, unsafe_allow_html=True)
 # Motivation --------------------------------------------------------------------------------------------------------------------
 if navigation == 'Startseite':
     c1,c2,c3 = st.beta_columns([1,6,1])
+    c2.markdown('<div style="text-align: center"><em> <font size = 6><b> Sei du selbst die Veränderung, die du dir wünschst für diese Welt! </b></font> - Mahatma Gandhi</em></div>', unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns([2.5,6,2.5])
     imagestart= Image.open('Startseite.png')
     c2.image(imagestart,width=1000, clamp=False, channels='RGB', output_format='auto')
     
 
-elif navigation == 'Umsetzung & Mathematischer Hintergrund':
+elif navigation == 'Hintergrund: Mathematische Optimierung':
     st.write("""
              ## Umsetzung und Grundsätze der Modellierung
-             Neben der Auskunft über den persönlichen CO2-Verbrauch pro Jahr soll mit der Modellierung eine Handlungsempfehlung gegeben werden, wie das Verhalten verändert könnte, um das CO2-Ziel einzuhalten. Unser Ziel ist es, die Eingabe für den Benutzer möglichst einfach zu gestalten. Deshalb ist es in einigen Bereichen notwendig Verallgemeinerungen zu treffen. Zur Berechnung des persönlichen CO2-Verbrauchs pro Jahr sollen folgende Bereiche berücksichtig werden:
+             Neben der Auskunft über den persönlichen CO2-Verbrauch pro Jahr soll mit der Modellierung eine Handlungsempfehlung gegeben werden, wie das Verhalten verändert könnte, um das CO2-Ziel einzuhalten. 
              """)
-    st.write("1.	Nahrung")
-    st.write("2.	Wohnen")
-    st.write("3.	Mobilität")
-    st.write("4.	Konsum")
     st.write("""
              Dabei werden zu diesen Bereichen vom Benutzer bestimmte Angaben abgefragt, die die Höhe des Verbrauchs bestimmen. 
              Damit die Empfehlungen für das künftige Verhalten zu den Bedürfnissen des Benutzers passen, können ebenfalls Angaben dazu gemacht werden, wie wichtig es dem Benutzer ist, bestimmte Aspekte beizubehalten. So soll sichergestellt werden, dass der Vorschlag zur Anpassung des persönlichen Verhaltens auch umgesetzt werden kann. 
@@ -242,10 +240,15 @@ elif navigation == 'Fußabdruck-Rechner':
     
     
 # Pro Kopf Budget ---------------------------------------------------------------------------------------------------------
-elif navigation == 'Persönlicher Fußabdruck':
+elif navigation == 'Hintergrund: Persönlicher Fußabdruck':
     st.write("""
              ## Berechnung des persönlichen CO2-Verbrauchs
-             Zur Ermittlung des pro Kopf CO2-Verbrauch wird der persönliche Gesamtverbrauch in verschiedene Bereiche unterteilt. Auf der Grundlage des persönlichen Verhaltens wird der individuelle CO2-Verbrauch berechnet. Darüber hinaus wird eine Handlungsempfehlung ausgegeben, die die Reduzierung gewisser Aspekte vorschlägt, um das persönliche CO2-Budget einhalten zu können. 
+             Zur Ermittlung des individuellen CO2-Verbrauchs wird der persönliche Gesamtverbrauch in verschiedene Bereiche unterteilt.
+             Unser Ziel ist es, die Eingabe für den Benutzer möglichst einfach zu gestalten. Deshalb ist es in einigen Bereichen notwendig Verallgemeinerungen zu treffen.
+             Zur Berechnung des persönlichen CO2-Verbrauchs pro Jahr sollen folgende Bereiche berücksichtig werden:""")
+    c1,c2,c3 = st.beta_columns([1,10,1])
+    c2.markdown('<ol> <li>Nahrung</li><li>Wohnen</li><li>Mobilität</li><li>Konsum(Kleidung)</li>', unsafe_allow_html=True)
+    st.write("""Auf der Grundlage des persönlichen Verhaltens wird der individuelle CO2-Verbrauch berechnet.  
              """)
     st.markdown("***")
     st.write("""
@@ -257,8 +260,7 @@ elif navigation == 'Persönlicher Fußabdruck':
     c2.image(image3, width=700, clamp=False, channels='RGB', output_format='auto')
     st.write("Zur Berechnung des persönlichen CO2-Verbrauchs durch die Nahrung werden vom Benutzer folgende Aspekte selbst angegeben:")
     c1,c2,c3 = st.beta_columns([1,10,1])
-    c2.write("1. Verzehrmenge Fleisch pro Woche in kg 2")
-    c2.write("2. Regionale Lebensmittel")
+    c2.markdown('<ol> <li>Verzehrmenge Fleisch pro Woche in kg</li><li>Regionale Lebensmittel</li>', unsafe_allow_html=True)
     st.write("""Die Berechnung des CO2-Verbrauchs durch die Nahrung werden die durchschnittlichen jährlichen Verzehrmengen mit den entsprechenden CO2-Werten multipliziert und über alle Lebensmittelgruppen aufaddiert, wobei die Verzehrmenge Fleisch vom Benutzer angegeben wird. Entsprechend muss bei der Berechnung diese wöchentliche Angabe durch Multiplikation mit dem Faktor 53 (Anzahl der Wochen pro Jahr) berücksichtigt werden. Damit der Aspekt „2. Regionale und saisonale Lebensmittel“ in die Berechnung einfließen kann, werden gemäß [] die entsprechenden Faktoren aus Tabelle 4 einbezogen. 
              """)
     c1,c2,c3 = st.beta_columns([1,3,1])
@@ -285,8 +287,7 @@ elif navigation == 'Persönlicher Fußabdruck':
     c2.image(image7, width=700, clamp=False, channels='RGB', output_format='auto')
     st.write("Der berechnete Wert des persönlichen CO2-Verbrauchs durch den Aspekt Wohnen soll personalisiert werden, indem der Benutzer folgende Angaben macht:")
     c1,c2,c3 = st.beta_columns([1,10,1])
-    c2.write("1. Wohnfläche pro Person")
-    c2.write("2. Eingestellte Raumtemperatur")
+    c2.markdown('<ol> <li>Wohnfläche pro Person</li><li>Eingestellte Raumtemperatur</li>', unsafe_allow_html=True)
     st.write("""Mit diesen beiden Größen wird der CO2-Verbrauch des Benutzers für den Aspekt Wohnen durch die folgende Beziehung berechnet.""")
     c1,c2,c3 = st.beta_columns([1,3,1])
     image8= Image.open('Formel_Wohnen.PNG')
@@ -298,6 +299,15 @@ elif navigation == 'Persönlicher Fußabdruck':
     c1,c2,c3 = st.beta_columns([1,3,1])
     image9= Image.open('Tab6_Mobilität.PNG')
     c2.image(image9, width=700, clamp=False, channels='RGB', output_format='auto')
+    st.write("""Außerdem wird der CO2-Wert in kgCO2 pro km für Flugzeuge gemäß [2] mit 0,197 angenommen. 
+             Zur Berechnung des persönlichen CO2-Verbrauchs unter dem Aspekt Mobilität sollen folgende Angaben des Benutzers berücksichtigt werden:
+             """)
+    c1,c2,c3 = st.beta_columns([1,10,1])
+    c2.markdown('<ol> <li>Gefahrene Autokilometer pro Jahr pro Person</li><li>Flugstunden der letzten vier Jahre</li>', unsafe_allow_html=True)
+    st.write("Unter Berücksichtigung dieser Angaben wird der CO2-Wert gemäß dem folgenden Zusammenhang berechnet. ")
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image20= Image.open('Formel_Mobilität.PNG')
+    c2.image(image20, width=700, clamp=False, channels='RGB', output_format='auto')
     
     st.markdown("***")
     st.write("## Konsum")
@@ -306,13 +316,20 @@ elif navigation == 'Persönlicher Fußabdruck':
     image10= Image.open('Tab7_Konsum.PNG')
     c2.image(image10, width=700, clamp=False, channels='RGB', output_format='auto')
     st.write("Der Benutzer soll dabei folgende Angabe zu seinem Konsumverhalten machen:")
-    st.write("1. Anzahl gekaufte Kleidungsstücke pro Jahr.")
+    c1,c2,c3 = st.beta_columns([1,10,1])
+    c2.markdown('<ol> <li>Anzahl gekaufte Kleidungsstücke pro Jahr</li>', unsafe_allow_html=True)
     st.write("Unter Berücksichtigung dieser Angabe wird der persönliche CO2-Verbrauch durch den Aspekt Konsum durch den folgenden Zusammenhang berechnet.")
     c1,c2,c3 = st.beta_columns([1,3,1])
     image11= Image.open('Formel_Konsum.PNG')
     c2.image(image11, width=700, clamp=False, channels='RGB', output_format='auto')
     
-elif navigation == "Budget Berechnung":
+    st.markdown("***")
+    st.write("Quellen:")
+    st.write("[1] Fütterer, E. (2021). Kalorientabelle für Lebensmittel: Von Gemüse bis Fast Food. Verfügbar über: https://www.fitforfun.de/abnehmen/kalorientabelle-fuer-lebensmittel-307736.html (letzter Zugriff: 22.06.2021)")
+    st.write("[2] ")
+    st.write("[3] Keller, S. (2021). Maximale Geschwindigkeit der weltweit schnellsten Passagierflugzeuge der Welt. Verfügbar über https://de.statista.com/statistik/daten/studie/1056126/umfrage/schnellste-passagierflugzeuge-der-welt-nach-maximaler-geschwindigkeit/ (letzter Zugriff 23.06.2021)")
+    
+elif navigation == "Hintergrund: Budget Berechnung":
     st.write("""
              ## Berechnung des pro Kopf Budgets (Deutschland)
              Zunächst soll der Anteil der Bevölkerung am CO2-Gesamtverbrauch von Deutschland bestimmt werden. Dieser ermöglicht es uns im weiteren Verlauf ausgehend von künftigen Klimazielen des Landes das persönliche CO2-Budget pro Kopf zu berechnen und Handlungsempfehlungen zur Reduzierung des persönlichen CO2-Verbrauchs auszusprechen. 
@@ -321,11 +338,11 @@ elif navigation == "Budget Berechnung":
     c1,c2,c3 = st.beta_columns([1,3,1])
     image12= Image.open('Tab1_Einwohnerzahlen.PNG')
     c2.image(image12, width=700, clamp=False, channels='RGB', output_format='auto')
-    st.write("Zunächst kann nun der gesamte durch die Bevölkerung verursachte CO2-Verbrauch (A_{Bev}) für die entsprechenden Jahre aus Tab. 1 berechnet werden. ")
+    st.write("Zunächst kann nun der gesamte durch die Bevölkerung verursachte CO2-Verbrauch $$(A_{Bev})$$ für die entsprechenden Jahre aus Tab. 1 berechnet werden. ")
     c1,c2,c3 = st.beta_columns([2,3,1])
     image13= Image.open('Formel_Bev1.PNG')
     c2.image(image13, width=300, clamp=False, channels='RGB', output_format='auto')
-    st.write("Somit kann der prozentuale Anteil der durch die Bevölkerung verursachten Emissionen (P_{Bev}) an den bundesweiten Emissionen bestimmt werden.")
+    st.write("Somit kann der prozentuale Anteil der durch die Bevölkerung verursachten Emissionen $$(P_{Bev})$$ an den bundesweiten Emissionen bestimmt werden.")
     c1,c2,c3 = st.beta_columns([2,3,1])
     image14= Image.open('Formel_Bev2.PNG')
     c2.image(image14, width=300, clamp=False, channels='RGB', output_format='auto')
@@ -333,7 +350,7 @@ elif navigation == "Budget Berechnung":
     c1,c2,c3 = st.beta_columns([1,3,1])
     image15= Image.open('Tab2_Einwohner.PNG')
     c2.image(image15, width=700, clamp=False, channels='RGB', output_format='auto')
-    st.write("Zuletzt wird der Mittelwert (\bar{P_{Bev}}) gebildet über alle so bestimmten Anteile des CO2-Verbrauchs der Bevölkerung. ")
+    st.write("Zuletzt wird der Mittelwert $(\overline{P_{Bev}})$ gebildet über alle so bestimmten Anteile des CO2-Verbrauchs der Bevölkerung. ")
     c1,c2,c3 = st.beta_columns([2,3,1])
     image16= Image.open('Wert_Bev.PNG')
     c2.image(image16, width=300, clamp=False, channels='RGB', output_format='auto')
@@ -342,12 +359,16 @@ elif navigation == "Budget Berechnung":
     st.markdown("***")
     st.write("""
              ## Künftige CO2-Budgets
-             Damit künftige pro Kopf CO2-Budgets berechnet werden können, soll hier das zu Grunde liegende Modell vorgestellt werden. Die Daten basieren auf dem Klimaschutzplan 2050, der vom Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU) veröffentlicht wurde. Demnach sollen ausgehend vom Jahr 1990 bis 2030 die CO2-Emissionen mindestens um 55%, bis 2040 um 70% und bis 2050 um 80%-95% gesenkt werden. Die sich aus diesen Zielen ergebenden CO2-Budgets sind in Abbildung 1 dargestellt.  
+             Damit künftige pro Kopf CO2-Budgets berechnet werden können, soll hier das zu Grunde liegende Modell vorgestellt werden. Die Daten basieren auf dem Klimaschutzplan 2050, der vom Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU) veröffentlicht wurde [2]. Demnach sollen ausgehend vom Jahr 1990 bis 2030 die CO2-Emissionen mindestens um 55%, bis 2040 um 70% und bis 2050 um 80%-95% gesenkt werden. Die sich aus diesen Zielen ergebenden CO2-Budgets sind in Abbildung 1 dargestellt.  
              """)
     c1,c2,c3 = st.beta_columns([1,3,1])
     image17= Image.open('Emissionsziel.PNG')
     c2.image(image17, width=700, clamp=False, channels='RGB', output_format='auto')
     st.write("Mit dieser Datengrundlage und dem zuvor ermittelten Anteil des CO2-Verbrauches der Bevölkerung kann der pro Kopf Ausstoß für künftige Szenarien ermittelt werden. ")
+    st.markdown("***")
+    st.write("Quellen:")
+    st.write("[1] statistica.de (abgerufen im Juni 2021)")
+    st.write("[2] Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU) (2019).  Klimaschutzplan 2050: Klimapolitische Grundsätze und Ziele der Bundesregierung (2.Auflage). BMU. Verfügbar über: https://www.bmu.de/fileadmin/Daten_BMU/Download_PDF/Klimaschutz/klimaschutzplan_2050_bf.pdf (letzter Zugriff: 22.06.2021)")
     
 else:
     

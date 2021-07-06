@@ -100,7 +100,7 @@ c1.write("""
         # Fußabdruck der Zukunft
         ## Optimiere deinen ökologischen Fußabdruck
     """)
-navigation = c2.selectbox('', ["Startseite","Fußabdruck-Rechner", "Hintergrund: Persönlicher Fußabdruck", "Hintergrund: Budget Berechnung", "Hintergrund: Mathematische Optimierung","Impressum"])
+navigation = c2.selectbox('', ["Startseite","Rechner: Fußabdruck-Optimierung", "Hintergrund: Persönlicher Fußabdruck", "Hintergrund: Budget Berechnung", "Hintergrund: Mathematische Optimierung","Hintergrund: Datenvalidierung", "Rechner: Gesellschaftlicher Einfluss","Impressum"])
 st.markdown("***")
 hide_footer_style = """
     <style>
@@ -129,7 +129,7 @@ elif navigation == 'Hintergrund: Mathematische Optimierung':
              """)
     
     
-elif navigation == 'Fußabdruck-Rechner':
+elif navigation == 'Rechner: Fußabdruck-Optimierung':
     st.write("""
              Im November 2016 beschloss das Bundeskabinett den Klimaschutzplan 2050. Darin sind die Klimaschutzziele der Bundesrepublik Deutschland festgelegt, die im Einklang mit dem Pariser Übereinkommen stehen. So sollen die Treibhausgasemissionen bis 2050 um 80 bis 95 Prozent reduziert werden im Vergleich zum Wert von 1990. Die Einhaltung dieses Ziels stellt nicht nur die Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch großen Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf Einschränkungen einlassen müssen und einen Beitrag zum Klimaschutz leisten müssen. Doch wie könnten diese Einschränkungen für die Bevölkerung von Deutschland aussehen? 
              Unsere Modellierung basiert auf dem bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. """)
@@ -369,6 +369,16 @@ elif navigation == "Hintergrund: Budget Berechnung":
     st.write("Quellen:")
     st.write("[1] statistica.de (abgerufen im Juni 2021)")
     st.write("[2] Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU) (2019).  Klimaschutzplan 2050: Klimapolitische Grundsätze und Ziele der Bundesregierung (2.Auflage). BMU. Verfügbar über: https://www.bmu.de/fileadmin/Daten_BMU/Download_PDF/Klimaschutz/klimaschutzplan_2050_bf.pdf (letzter Zugriff: 22.06.2021)")
+ 
+elif navigation == "Hintergrund: Datenvalidierung":
+    st.write("""Nach dem Aufstellen des Modells ist es notwendig, die mit unserer Modellierung berechneten CO2-Verbrauchswerte auf ihre Sinnhaftigkeit zu überprüfen. 
+             Die CO2-Werte, die das Modell in den einzelnen Kategorien berechnet, sollen mit dem CO2-Rechner des Umweltbundesamtes [2] verglichen werden. 
+             Außerdem soll die mit dem Modell berechnete gesamte CO2-Verbrauch überprüft werden. Hierzu wird der pro Kopf Verbrauch aus dem Jahr 2019 [1] mit den entsprechenden Durchschnittswerten aus diesem Jahr simuliert.
+             """)
+    st.markdown("***")
+    st.write("Quellen:")
+    st.write("[1] statistica.de (abgerufen im Juli 2021)")
+    st.write("[2] UBA CO2-Rechner (abgerufen im Juli 2021)")
     
 else:
     

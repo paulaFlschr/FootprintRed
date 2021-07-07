@@ -100,7 +100,7 @@ c1.write("""
         # Fußabdruck der Zukunft
         ## Optimiere deinen ökologischen Fußabdruck
     """)
-navigation = c2.selectbox('', ["Startseite","Rechner: Fußabdruck-Optimierung", "Rechner: Fußabdruck-Optimierung2", "Hintergrund: Persönlicher Fußabdruck", "Hintergrund: Budget Berechnung", "Hintergrund: Fußabdruck-Optimierung","Hintergrund: Datenvalidierung", "Rechner: Gesellschaftlicher Einfluss","Impressum"])
+navigation = c2.selectbox('', ["Startseite","Rechner: Fußabdruck-Optimierung", "Hintergrund: Persönlicher Fußabdruck", "Hintergrund: Budget Berechnung", "Hintergrund: Fußabdruck-Optimierung","Hintergrund: Datenvalidierung", "Rechner: Gesellschaftlicher Einfluss","Impressum"])
 st.markdown("***")
 hide_footer_style = """
     <style>
@@ -134,7 +134,7 @@ elif navigation == 'Hintergrund: Fußabdruck-Optimierung':
                 $\addConstraint{\displaystyle\sum\limits_{i=0}^{4}var_{i} \cdot co_{2}\_akt_{i} + \displaystyle\sum\limits_{i=5}^{11}var_{i} \cdot co_{2}\_ess_{i} + 0.249 \cdot akt_{3} \cdot 80}{\leq}{max\_co_{2}}$
                 """)
              
-elif navigation == "Rechner: Fußabdruck-Optimierung2":
+elif navigation == "Rechner: Fußabdruck-Optimierung":
     
     st.markdown("""Befolge die folgenden Schritte und wir sagen dir, was du tun kannst, um deine $CO_{2}$-Emissionen
                 unter eine von dir gewählte Grenze zu verringern.""")
@@ -165,13 +165,13 @@ elif navigation == "Rechner: Fußabdruck-Optimierung2":
     col4.markdown("### Kategorie: Konsum (Kleidung)",unsafe_allow_html=True)
     konsum1 = col4.text_input(label='Wie viele Kleidungsstücke kaufst du im Jahr?', value=60)
     col4.markdown('<br><br><br><br><br>',unsafe_allow_html=True)
-    #submitted1 = col4.button(label='Anwenden', key=None, help=None, on_click=None, args=None, kwargs=None)
     
      # Berechne den aktuellen fußabdruck
     akt = [float(nahrung1),nahrung2,wohnen1,float(wohnen2),float(mob1),float(mob2),float(konsum1)]
     akt_abdruck, co2_akt, co2_akt_nach_kat, faktor_nahrung = akt_abdruck(akt)
         
-    if st.button('Anwenden'):
+    checkbox1 = st.checkbox(label="Schritt 1 abschließen: Fußabdruck berechnen")
+    if checkbox1:
         col1,col2,col3 = st.beta_columns((0.7,1.3,2))
         imagefuss = Image.open('Fuss.PNG')
         col1.image(imagefuss, width=700, use_column_width=True, clamp=False, channels='RGB', output_format='auto')
@@ -179,7 +179,7 @@ elif navigation == "Rechner: Fußabdruck-Optimierung2":
                 <center><font size="4"><b>Dein aktueller Fußabdruck beträgt """+ str(round(akt_abdruck))+""" Kilogramm.</b></font></center><br>
                 Zum Vergleich: Der durchnittliche CO2 Fußabdruck in Deutschland im Jahr 2019 lag bei ca 7900 Kilogramm.
                 Der durchschnittliche weltweite CO2 Fußabdruck liegt bei 4800 Kilogramm.<br>
-                In dem unten stehenden Diagramm findest du den Vergleich zum durchnittlichen Fußabdruck eines 
+                In dem neben stehenden Diagramm findest du den Vergleich zum durchnittlichen Fußabdruck eines 
                 Menschen in Deutschlands zu deinem Fußabdruck, aufgeschlüsselt in die vier Kategorien.
                 """,unsafe_allow_html=True)
             
@@ -192,7 +192,7 @@ elif navigation == "Rechner: Fußabdruck-Optimierung2":
         st.markdown("***")
     
         st.markdown("""
-                 <font size="5"><b>Schritt 2: Gib Minimalwerte an</b> </font><br>
+                 <font size="5"><b>Schritt 2: Optimierung-Gib Minimalwerte an</b> </font><br>
                           <br> Wir wollen nun deinen Fußabdruck verkleinern, d.h.
                            deinen $CO_{2}$-Ausstoß reduzieren. Das wird zu Veränderungen
                            in einzelnen Kategorien führen. Hier hast du die Möglichkeit
@@ -207,279 +207,95 @@ elif navigation == "Rechner: Fußabdruck-Optimierung2":
         min_val_mob1 = col3.text_input(label='Minimale Autokilometer pro Jahr', value=0)
         min_val_mob2 = col3.text_input(label='Minimale Flugstunden in 4 Jahren', value=0)
         min_val_konsum1 = col4.text_input(label='Minimale Anzahl an neuen Kleidungsstücken im Jahr', value=0)
-            
-        st.markdown("""Da wir wollen, dass das ganze für dich möglichst
-                      angenehm ist, brauchen wir Informationen darüber, wie bedeutsam welcher Aspekt in deinem 
-                      Leben für dich ist. Dafür kannst du Werte zwischen 1 und 10 für die einzelnen
-                      Aspekte setzen, wobei 10 sehr wichtig 
-                      und 1 gar nicht wichtig bedeutet. 
-            """,unsafe_allow_html=True)
-           
-        remaining_prefs=[1,2,3,4,5,6,7,8,9,10]
-        col1, col2, col3, col4 = st.beta_columns(4)
-        val_nahrung1 = col1.selectbox('Fleisch- und Fischkonsum beibehalten', remaining_prefs)
-        val_wohnen = col2.selectbox('Zimmertemperatur beibehalten', remaining_prefs)
-        val_mob1 = col3.selectbox('Autokilometer beibehalten',remaining_prefs)
-        val_mob2 = col3.selectbox('Flugstunden beibehalten', remaining_prefs)
-        val_konsum1 = col4.selectbox('Konsum beibehalten', remaining_prefs)
-    
-        link1 = '[Pariser Klimaabkommen](https://treaties.un.org/Pages/ViewDetails.aspx?src=IND&mtdsg_no=XXVII-7-d&chapter=27&clang=_en)'
-        link2 = '[Zwei-Grad-Ziel](https://wiki.bildungsserver.de/klimawandel/index.php/2-Grad-Ziel)'
-    
-        st.markdown("""
-                 <font size="5"><b>Schritt 3: Jahr festlegen</b> </font><br>
-                          <br> Im Jahr 2015 unterschrieben viele Länder das """+link1+""", darunter auch Deutschland.
-                          Darin verpflichten sich die Länder ihre Traibhausgasemissionen auf ein bestimmtes Niveau
-                          zu reduzieren, um das """ +link2+ """ einzuhalten. Die Reduktion der CO2 Emmissionen erfolgt 
-                          schrittweise. Anhand des CO2-Budgets von Deutschland für die bestimmten Jahre haben
-                          wir berechnet, wie hoch dein CO2 Budget für die Jahre zwischen 2020 und 2050 ist.
-                          Wie genau wir das berechnet haben findest du im Abschnitt 'Hintergrund: Budget Berechnung'.
-                          <br> Über den Schieberegler kannst du das Jahr auswählen, für welches du deinen Fußabdruck 
-                          optimieren möchtest. Wählst du also beispielweise das Jahr 2030, so wird dein CO2 Fußabdruck
-                          so weit heruntergesetzt, dass du unter dem Pro-Kopf-CO2-Budget von 2030 liegst.
-                """,unsafe_allow_html=True)
         
-        jahr = st.slider(label='Jahr', min_value=2021,max_value=2050,step=1)
+        checkbox2 = st.checkbox(label="Schritt 2 abschließen: Minimalwerte setzen")
+        if checkbox2:
+            st.markdown("""
+                        <font size="5"><b>Schritt 3: Optimierung-Gib Präferenzen an</b> </font><br>
+                        Da wir wollen, dass das ganze für dich möglichst
+                          angenehm ist, brauchen wir Informationen darüber, wie bedeutsam welcher Aspekt in deinem 
+                          Leben für dich ist. Dafür kannst du Punkte zwischen 1 und 10 für die einzelnen
+                          Aspekte vergeben, wobei 10 sehr wichtig 
+                          und 1 gar nicht wichtig bedeutet. 
+                """,unsafe_allow_html=True)
+               
+            remaining_prefs=[1,2,3,4,5,6,7,8,9,10]
+            col1, col2, col3, col4 = st.beta_columns(4)
+            val_nahrung1 = col1.selectbox('Fleisch- und Fischkonsum beibehalten', remaining_prefs)
+            val_wohnen = col2.selectbox('Zimmertemperatur beibehalten', remaining_prefs)
+            val_mob1 = col3.selectbox('Autokilometer beibehalten',remaining_prefs)
+            val_mob2 = col3.selectbox('Flugstunden beibehalten', remaining_prefs)
+            val_konsum1 = col4.selectbox('Konsum beibehalten', remaining_prefs)
         
-        
-        
-        # Arrays in denen die Benutzereingaben gespeichert werden
-        akt = [float(nahrung1),nahrung2,wohnen1,float(wohnen2),float(mob1),float(mob2),float(konsum1)]
-        pref = [float(val_nahrung1),float(val_wohnen),float(val_mob1),float(val_mob2),float(val_konsum1)]
-        min_vals = [float(min_val_nahrung1),float(min_val_wohnen), float(min_val_mob1), float(min_val_mob2), float(min_val_konsum1)]
-        
-        
-        solution = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung)
-    
-        st.markdown("***")
-        st.markdown("""
-                <font size="5"><b>Dein Ergebnis</b> </font><br>
-                """,unsafe_allow_html=True)
-    
-        if solution[0]==1 and solution[1]==1 and solution[2]==1 and solution[3]==1 and solution[4]==1:
-            st.markdown("""
-                <b>Super! Dein aktueller Fußabdruck liegt bereits unter der geforderten CO2-Grenze. 
-                Das heißt natürlich nicht, dass du garnichts mehr tun kannst und sollst.</b>
-                """,unsafe_allow_html=True)
-        if solution[0]<1:
-            reduktion0 = 100 - round(solution[0],4)
-            st.markdown("""
-                <b>Reduziere deinen Fleisch- und Fischkonsum um """+str(reduktion0)+""" %. </b><br>
-                Suche doch mal im Internet nach vegetarischen Rezepten. Dort gibt es eine rießige Auswahl, da ist
-                sicher etwas dabei was dir schmecken könnte ;)
-                """,unsafe_allow_html=True)
-        if solution[1]<1:
-            reduktion1 = 100 - round(solution[1],4)
-            st.markdown("""
-                <b>Reduziere deine Zimmerwärme um """+str(reduktion1)+""" %.</b> <br>
-                Mit ein paar dicken Socken, einem dicken Pulli und einem leckerer Tee eingekuschtel in eine
-                flauschige Decke. Klimaschutz muss nicht immer ungemütlich sein.
-                """,unsafe_allow_html=True)
-        if solution[2]<1:
-            reduktion2 = 100 - round(solution[2],4)
-            st.markdown("""
-                <b>Reduziere deine Autokilometer um """+str(reduktion2)+""" %. </b><br>
-                Kurze Strecken kannst du mit dem Fahrrad fahren oder zu Fuß gehen. Das hält gleichzeitig noch
-                fit und gesund. Nimm doch für längere Strecken einfach mal den Bus oder die Bahn. Das kann
-                manchmal auch viel entspannter sein.
-                """,unsafe_allow_html=True)
-        if solution[3]<1:
-            reduktion3 = 100 - round(solution[3],4)
-            st.markdown("""
-                <b>Reduziere deine Flugstunden um """+str(reduktion3)+""" %. </b><br>
-                Fliegen ist besonders klimaschädlich. Natürlich heißt das nicht, dass du garnicht mehr weiter
-                weg kannst. Aber überlege doch mal ob es vielleicht Alternativen gibt. Urlaubsziele lassen sich
-                zum Beispiel auch in Deutschland viele schöne finden.
-                """,unsafe_allow_html=True)
-        if solution[4]<1:
-            reduktion4 = 100 - round(solution[4],4)
-            st.markdown("""
-                <b>Reduziere deinen Konsum um """+str(reduktion4)+""" %.</b> <br>
-                Weniger Kleidungsstücke und dafür hochwertige sind deutlich besser für das Klima. Seien wir mal
-                ehrlich, viele Sachen die wir einmal kaufen ziehen wir am Ende viel zu selten an...
-                """,unsafe_allow_html=True)
-    
-elif navigation == 'Rechner: Fußabdruck-Optimierung':
-    link2 = '[Zwei-Grad-Ziel](https://wiki.bildungsserver.de/klimawandel/index.php/2-Grad-Ziel)'
-    st.markdown("""
-             Im November 2016 beschloss das Bundeskabinett den Klimaschutzplan 2050. Darin sind die Klimaschutzziele der Bundesrepublik Deutschland festgelegt, 
-             die im Einklang mit dem Pariser Übereinkommen stehen. So sollen die Treibhausgasemissionen bis 2050 um 80 bis 95 Prozent im Vergleich zum Wert von 1990
-             reduziert werden. Die Einhaltung dieses Ziels stellt nicht nur die Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch großen 
-             Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf Einschränkungen einlassen müssen und einen Beitrag zum 
-             Klimaschutz leisten müssen.<br> <center> <b> Doch wie könnten diese Einschränkungen für die Bevölkerung von Deutschland aussehen? </b></center><br>
-             Unsere Modellierung basiert auf dem bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen 
-             CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. <br>
-             Dein Ergebnis erhälst du in Form von Prozentangaben, die angeben, um wie viel Prozent du deinen Verbrauch in den entsprechenden
-             Kategorien reduzieren musst, damit wir es gemeinsam schaffen, das """+link2+""" des Pariser Klimaabkommens einzuhalten.
-             """,unsafe_allow_html=True)
-             
-    # Sidebar ----------------------------------------------------------------------------------------------------------------------
-    # Sidebar sind Abfragen nach aktuellem Zustand
-    st.sidebar.header('Eingabeparameter zur Berechnung deines aktuellen CO2-Fußabdrucks')
-    
-    st.sidebar.markdown("***")
-    st.sidebar.write("""
-        ### Kategorie: Ernährung
-    """)
-    nahrung1 = st.sidebar.text_input(label='Wie viel Kilogramm Fleisch und Fisch konsumierst du wöchentlich?', value=1.1)
-    nahrung2 = st.sidebar.radio('Wie wichtig ist dir, dass die Lebensmittel regional sind?',['sehr wichtig','manchmal wichtig','garnicht wichtig'], index=1)
-    st.sidebar.markdown("***")
-    st.sidebar.write("""
-        ### Kategorie: Wohnen
-    """)
-    wohnen1 = st.sidebar.slider(label='Auf wie viel Grad heizt du deine Wohnung normalerweise?', min_value=18,max_value=24,step=1, value=21)
-    wohnen2 = st.sidebar.text_input(label='Wie viel Quadratmeter Wohnfläche hast du zur Verfügung (pro Person)?', value=47)
-    st.sidebar.markdown("***")
-    st.sidebar.write("""
-        ### Kategorie: Mobilität
-    """)
-    mob1 = st.sidebar.text_input(label='Wie viel Kilometer fährst du pro Jahr mit dem Auto (pro Person)?', value=11888)
-    mob2 = st.sidebar.text_input(label='Wie viele Stunden bist du in den letzten vier Jahren geflogen?', value=12)
-    st.sidebar.markdown("***")
-    st.sidebar.write("""
-        ### Kategorie: Konsum
-    """)
-    konsum1 = st.sidebar.text_input(label='Wie viele Kleidungsstücke kaufst du im Jahr?', value=60)
-    #-------------------------------------------------------------------------------------------------------------------------
-    
-    c1,c2,c3 = st.beta_columns((1,5,1))
-    image1= Image.open('Umweltschutz1.jpg')
-    c2.image(image1, width=700, clamp=False, channels='RGB', output_format='auto')
-    
-    st.markdown("""
-             Um deine persönliche Empfehlung zu bekommen, sind folgende Schritte notwendig:<br>
-             <font size="5"><b>Schritt 1: Ermittle deinen aktuellen Fußabdruck</b> </font><br><br>
-                     Fülle die Seitenleiste aus. <br> 
-                     Beachte, dass du alle Angaben für den genannten Zeitraum mitteln solltest. Isst
-                     du also in einer Woche 2 Kilogramm Fleisch und Fisch und in der darauf folgenden
-                     kein Fleisch so setze den Wert auf 1. Denke außerdem daran, dass auch Unterwäsche
-                     und Schuhe Kleidungsstücke sind.<br>
-                     <em>Hinweis: Damit dir die Einschätzung etwas einfacher fällt, sind als Platzhalter die
-                     Werte einer durchschnittlichen Person in Deutschland angegeben. </em>     
-            """,unsafe_allow_html=True)
-    
-    # Berechne den aktuellen fußabdruck
-    akt = [float(nahrung1),nahrung2,wohnen1,float(wohnen2),float(mob1),float(mob2),float(konsum1)]
-    akt_abdruck, co2_akt, co2_akt_nach_kat, faktor_nahrung = akt_abdruck(akt)
-    
-
-    st.markdown("""
-                <b>Dein aktueller Fußabdruck beträgt</b> """+ str(round(akt_abdruck))+""" <b>Kilogramm.</b><br>
-                Zum Vergleich: Der durchnittliche CO2 Fußabdruck in Deutschland im Jahr 2019 lag bei ca 7900 Kilogramm.
-                Der durchschnittliche weltweite CO2 Fußabdruck liegt bei 4800 Kilogramm.<br>
-                In dem unten stehenden Diagramm findest du den Vergleich zum durchnittlichen Fußabdruck eines 
-                Menschen in Deutschlands zu deinem Fußabdruck, aufgeschlüsselt in die vier Kategorien.
-                """,unsafe_allow_html=True)
-    
-    
-    d = {'Durchschnitt Deutschland CO2': [640,2730,3125,507], 'Dein CO2':co2_akt_nach_kat}
-    
-    df = pd.DataFrame(
-        [["Nahrung", 1704,co2_akt_nach_kat[0]], ["Wohnen", 2730,co2_akt_nach_kat[1]], ["Mobilität", 3125,co2_akt_nach_kat[2]],["Konsum (Kleidung)",507,co2_akt_nach_kat[3]]],
-        columns=["Kategorie","Durschnitt CO2 Deutschland", "Dein CO2"])
-    fig = px.bar(df, x="Kategorie", y=["Durschnitt CO2 Deutschland", "Dein CO2"], barmode='group', height=400)
-    col1, col2, col3 = st.beta_columns((2,5,2))
-    col2.plotly_chart(fig)
-    
-    st.markdown("""
-             <font size="5"><b>Schritt 2: Lege die Parameter für die Optimierung fest</b> </font><br>
-                      <br> Wir wollen nun deinen Fußabdruck verkleinern. Damit das ganze für dich möglichst
-                      angenehm ist, brauchen wir Informationen darüber, wie bedeutsam welcher Aspekt in deinem 
-                      Leben für dich ist. Dafür kannst du Werte zwischen 1 und 10 für die einzelnen
-                      Aspekte setzen, wobei 10 sehr wichtig 
-                      und 1 gar nicht wichtig bedeutet. 
-            """,unsafe_allow_html=True)
-    remaining_prefs=[1,2,3,4,5,6,7,8,9,10]
-    col1, col2, col3, col4 = st.beta_columns(4)
-    val_nahrung1 = col1.selectbox('Fleisch- und Fischkonsum beibehalten', remaining_prefs)
-    val_wohnen = col2.selectbox('Zimmertemperatur beibehalten', remaining_prefs)
-    val_mob1 = col3.selectbox('Autokilometer beibehalten',remaining_prefs)
-    val_mob2 = col3.selectbox('Flugstunden beibehalten', remaining_prefs)
-    val_konsum1 = col4.selectbox('Konsum beibehalten', remaining_prefs)
-    
-    st.markdown("""Zusätzlich hast du hier die Möglichkeit Minimalwerte für die einzelnen Aspekte zu setzen.
-                Möchtest du zum Beispiel deine Zimmertemperatur nicht auf unter 20 Grad Celsius herabsetzen, dann
-                gib in das Eingabefeld eine 20 ein.
-            """,unsafe_allow_html=True)
-    col1, col2, col3, col4 = st.beta_columns(4)
-    min_val_nahrung1 = col1.text_input(label= 'Minimaler Fleisch- und Fischkonsum in kg pro Woche',value=0)
-    min_val_wohnen = col2.text_input(label='Minimale Zimmertemperatur', value=18)
-    min_val_mob1 = col3.text_input(label='Minimale Autokilometer pro Jahr', value=0)
-    min_val_mob2 = col3.text_input(label='Minimale Flugstunden in 4 Jahren', value=0)
-    min_val_konsum1 = col4.text_input(label='Minimale Anzahl an neuen Kleidungsstücken im Jahr', value=0)
-    link1 = '[Pariser Klimaabkommen](https://treaties.un.org/Pages/ViewDetails.aspx?src=IND&mtdsg_no=XXVII-7-d&chapter=27&clang=_en)'
-    st.markdown("""
-             <font size="5"><b>Schritt 3: Jahr festlegen</b> </font><br>
-                      <br> Im Jahr 2015 unterschrieben viele Länder das """+link1+""", darunter auch Deutschland.
-                      Darin verpflichten sich die Länder ihre Traibhausgasemissionen auf ein bestimmtes Niveau
-                      zu reduzieren, um das """ +link2+ """ einzuhalten. Die Reduktion der CO2 Emmissionen erfolgt 
-                      schrittweise. Anhand des CO2-Budgets von Deutschland für die bestimmten Jahre haben
-                      wir berechnet, wie hoch dein CO2 Budget für die Jahre zwischen 2020 und 2050 ist.
-                      Wie genau wir das berechnet haben findest du im Abschnitt 'Hintergrund: Budget Berechnung'.
-                      <br> Über den Schieberegler kannst du das Jahr auswählen, für welches du deinen Fußabdruck 
-                      optimieren möchtest. Wählst du also beispielweise das Jahr 2030, so wird dein CO2 Fußabdruck
-                      so weit heruntergesetzt, dass du unter dem Pro-Kopf-CO2-Budget von 2030 liegst.
-            """,unsafe_allow_html=True)
-    
-    jahr = st.slider(label='Jahr', min_value=2021,max_value=2050,step=1)
-    
-    
-    
-    # Arrays in denen die Benutzereingaben gespeichert werden
-    akt = [float(nahrung1),nahrung2,wohnen1,float(wohnen2),float(mob1),float(mob2),float(konsum1)]
-    pref = [float(val_nahrung1),float(val_wohnen),float(val_mob1),float(val_mob2),float(val_konsum1)]
-    min_vals = [float(min_val_nahrung1),float(min_val_wohnen), float(min_val_mob1), float(min_val_mob2), float(min_val_konsum1)]
-    
-    
-    solution = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung)
-
-    st.markdown("***")
-    st.markdown("""
-            <font size="5"><b>Dein Ergebnis</b> </font><br>
-            """,unsafe_allow_html=True)
-
-    if solution[0]==1 and solution[1]==1 and solution[2]==1 and solution[3]==1 and solution[4]==1:
-        st.markdown("""
-            <b>Super! Dein aktueller Fußabdruck liegt bereits unter der geforderten CO2-Grenze. 
-            Das heißt natürlich nicht, dass du garnichts mehr tun kannst und sollst.</b>
-            """,unsafe_allow_html=True)
-    if solution[0]<1:
-        reduktion0 = 100 - round(solution[0],4)
-        st.markdown("""
-            <b>Reduziere deinen Fleisch- und Fischkonsum um """+str(reduktion0)+""" %. </b><br>
-            Suche doch mal im Internet nach vegetarischen Rezepten. Dort gibt es eine rießige Auswahl, da ist
-            sicher etwas dabei was dir schmecken könnte ;)
-            """,unsafe_allow_html=True)
-    if solution[1]<1:
-        reduktion1 = 100 - round(solution[1],4)
-        st.markdown("""
-            <b>Reduziere deine Zimmerwärme um """+str(reduktion1)+""" %.</b> <br>
-            Mit ein paar dicken Socken, einem dicken Pulli und einem leckerer Tee eingekuschtel in eine
-            flauschige Decke. Klimaschutz muss nicht immer ungemütlich sein.
-            """,unsafe_allow_html=True)
-    if solution[2]<1:
-        reduktion2 = 100 - round(solution[2],4)
-        st.markdown("""
-            <b>Reduziere deine Autokilometer um """+str(reduktion2)+""" %. </b><br>
-            Kurze Strecken kannst du mit dem Fahrrad fahren oder zu Fuß gehen. Das hält gleichzeitig noch
-            fit und gesund. Nimm doch für längere Strecken einfach mal den Bus oder die Bahn. Das kann
-            manchmal auch viel entspannter sein.
-            """,unsafe_allow_html=True)
-    if solution[3]<1:
-        reduktion3 = 100 - round(solution[3],4)
-        st.markdown("""
-            <b>Reduziere deine Flugstunden um """+str(reduktion3)+""" %. </b><br>
-            Fliegen ist besonders klimaschädlich. Natürlich heißt das nicht, dass du garnicht mehr weiter
-            weg kannst. Aber überlege doch mal ob es vielleicht Alternativen gibt. Urlaubsziele lassen sich
-            zum Beispiel auch in Deutschland viele schöne finden.
-            """,unsafe_allow_html=True)
-    if solution[4]<1:
-        reduktion4 = 100 - round(solution[4],4)
-        st.markdown("""
-            <b>Reduziere deinen Konsum um """+str(reduktion4)+""" %.</b> <br>
-            Weniger Kleidungsstücke und dafür hochwertige sind deutlich besser für das Klima. Seien wir mal
-            ehrlich, viele Sachen die wir einmal kaufen ziehen wir am Ende viel zu selten an...
-            """,unsafe_allow_html=True)
+            checkbox3 = st.checkbox(label="Schritt 3 abschließen: Präferenzen setzen")
+            if checkbox3:
+                st.markdown("""
+                         <font size="5"><b>Schritt 4: Optimierung-Jahr festlegen</b> </font><br>
+                                  Über den Schieberegler kannst du das Jahr auswählen, für welches du deinen Fußabdruck 
+                                  optimieren möchtest. Wählst du also beispielweise das Jahr 2030, so wird dein $CO_{2}$ Fußabdruck
+                                  so weit heruntergesetzt, dass du unter dem Pro-Kopf-$CO_{2}$-Budget von 2030 liegst.
+                        """,unsafe_allow_html=True)
+                
+                jahr = st.slider(label='Jahr', min_value=2021,max_value=2050,step=1)
+                
+                checkbox4 = st.checkbox(label="Schritt 4 abschließen: Jahr anwenden")
+                if checkbox4:
+                
+                    # Arrays in denen die Benutzereingaben gespeichert werden
+                    akt = [float(nahrung1),nahrung2,wohnen1,float(wohnen2),float(mob1),float(mob2),float(konsum1)]
+                    pref = [float(val_nahrung1),float(val_wohnen),float(val_mob1),float(val_mob2),float(val_konsum1)]
+                    min_vals = [float(min_val_nahrung1),float(min_val_wohnen), float(min_val_mob1), float(min_val_mob2), float(min_val_konsum1)]
+                    
+                    
+                    solution = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung)
+                
+                    st.markdown("***")
+                    st.markdown("""
+                            <font size="5"><b>Dein Ergebnis</b> </font><br>
+                            """,unsafe_allow_html=True)
+                
+                    if solution[0]==1 and solution[1]==1 and solution[2]==1 and solution[3]==1 and solution[4]==1:
+                        st.markdown("""
+                            <b>Super! Dein aktueller Fußabdruck liegt bereits unter der geforderten CO2-Grenze. 
+                            Das heißt natürlich nicht, dass du garnichts mehr tun kannst und sollst.</b>
+                            """,unsafe_allow_html=True)
+                    if solution[0]<1:
+                        reduktion0 = 100 - round(solution[0],4)
+                        st.markdown("""
+                            <b>Reduziere deinen Fleisch- und Fischkonsum um """+str(reduktion0)+""" %. </b><br>
+                            Suche doch mal im Internet nach vegetarischen Rezepten. Dort gibt es eine rießige Auswahl, da ist
+                            sicher etwas dabei was dir schmecken könnte ;)
+                            """,unsafe_allow_html=True)
+                    if solution[1]<1:
+                        reduktion1 = 100 - round(solution[1],4)
+                        st.markdown("""
+                            <b>Reduziere deine Zimmerwärme um """+str(reduktion1)+""" %.</b> <br>
+                            Mit ein paar dicken Socken, einem dicken Pulli und einem leckerer Tee eingekuschtel in eine
+                            flauschige Decke. Klimaschutz muss nicht immer ungemütlich sein.
+                            """,unsafe_allow_html=True)
+                    if solution[2]<1:
+                        reduktion2 = 100 - round(solution[2],4)
+                        st.markdown("""
+                            <b>Reduziere deine Autokilometer um """+str(reduktion2)+""" %. </b><br>
+                            Kurze Strecken kannst du mit dem Fahrrad fahren oder zu Fuß gehen. Das hält gleichzeitig noch
+                            fit und gesund. Nimm doch für längere Strecken einfach mal den Bus oder die Bahn. Das kann
+                            manchmal auch viel entspannter sein.
+                            """,unsafe_allow_html=True)
+                    if solution[3]<1:
+                        reduktion3 = 100 - round(solution[3],4)
+                        st.markdown("""
+                            <b>Reduziere deine Flugstunden um """+str(reduktion3)+""" %. </b><br>
+                            Fliegen ist besonders klimaschädlich. Natürlich heißt das nicht, dass du garnicht mehr weiter
+                            weg kannst. Aber überlege doch mal ob es vielleicht Alternativen gibt. Urlaubsziele lassen sich
+                            zum Beispiel auch in Deutschland viele schöne finden.
+                            """,unsafe_allow_html=True)
+                    if solution[4]<1:
+                        reduktion4 = 100 - round(solution[4],4)
+                        st.markdown("""
+                            <b>Reduziere deinen Konsum um """+str(reduktion4)+""" %.</b> <br>
+                            Weniger Kleidungsstücke und dafür hochwertige sind deutlich besser für das Klima. Seien wir mal
+                            ehrlich, viele Sachen die wir einmal kaufen ziehen wir am Ende viel zu selten an...
+                            """,unsafe_allow_html=True)
     
     
 # Pro Kopf Budget ---------------------------------------------------------------------------------------------------------

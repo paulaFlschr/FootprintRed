@@ -146,7 +146,7 @@ c1.write("""
         # Fußabdruck der Zukunft
         ## Optimiere deinen ökologischen Fußabdruck
     """)
-navigation = c2.selectbox('', ["Startseite","Rechner: Fußabdruck-Optimierung", "Hintergrund: Fußabdruckberechnung", "Hintergrund: Budgetberechnung", "Hintergrund: Fußabdruck-Optimierung","Hintergrund: Datenvalidierung", "Rechner: Gesellschaftlicher Einfluss","Impressum"])
+navigation = c2.selectbox('', ["Startseite","Rechner: Fußabdruck-Optimierung", "Hintergrund: Fußabdruckberechnung", "Hintergrund: Budgetberechnung", "Hintergrund: Fußabdruck-Optimierung","Hintergrund: Datenvalidierung", "Rechner: Gesellschaftlicher Einfluss","Quellen & Impressum"])
 st.markdown("***")
 hide_footer_style = """
     <style>
@@ -357,14 +357,20 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                             """,unsafe_allow_html=True)
                     if round(solution[0],4)<1:
                         reduktion0 = round((1 - solution[0])*100,2)
-                        st.markdown("""
+                        c1,c2 = st.beta_columns((1,3))
+                        image_fleisch= Image.open('Red_Fleisch.JPG')
+                        c1.image(image_fleisch, width=100, clamp=False, channels='RGB', output_format='auto')
+                        c2.markdown("""
                             <b>Reduziere deinen Fleisch- und Fischkonsum um """+str(reduktion0)+""" %. </b><br>
                             Suche doch mal im Internet nach vegetarischen Rezepten. Dort gibt es eine rießige Auswahl, da ist
                             sicher etwas dabei was dir schmecken könnte ;)
                             """,unsafe_allow_html=True)
                     if round(solution[1],4)<1:
                         reduktion1 = round((1 - solution[1])*100,2)
-                        st.markdown("""
+                        c1,c2 = st.beta_columns((3,1))
+                        image_heizen= Image.open('Red_Heizen.JPG')
+                        c2.image(image_heizen, width=100, clamp=False, channels='RGB', output_format='auto')
+                        c1.markdown("""
                             <b>Reduziere deine Zimmerwärme um """+str(reduktion1)+""" %.</b> <br>
                             Mit ein paar dicken Socken, einem dicken Pulli und einem leckerer Tee eingekuschtel in eine
                             flauschige Decke. Klimaschutz muss nicht immer ungemütlich sein.
@@ -379,7 +385,10 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                             """,unsafe_allow_html=True)
                     if round(solution[3],4)<1:
                         reduktion3 = round((1 - solution[3])*100,2)
-                        st.markdown("""
+                        c1,c2 = st.beta_columns((1,3))
+                        image_flieg= Image.open('Red_Fliegen.JPG')
+                        c1.image(image_flieg, width=100, clamp=False, channels='RGB', output_format='auto')
+                        c2.markdown("""
                             <b>Reduziere deine Flugstunden um """+str(reduktion3)+""" %. </b><br>
                             Fliegen ist besonders klimaschädlich. Natürlich heißt das nicht, dass du garnicht mehr weiter
                             weg kannst. Aber überlege doch mal ob es vielleicht Alternativen gibt. Urlaubsziele lassen sich
@@ -397,38 +406,38 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
 # Pro Kopf Budget ---------------------------------------------------------------------------------------------------------
 elif navigation == 'Hintergrund: Fußabdruckberechnung':
     st.write("""
-             ## Berechnung des persönlichen CO2-Verbrauchs
-             Zur Ermittlung des individuellen CO2-Verbrauchs wird der persönliche Gesamtverbrauch in verschiedene Bereiche unterteilt.
+             ## Berechnung des persönlichen $CO_{2}$-Verbrauchs
+             Zur Ermittlung des individuellen $CO_{2}$-Verbrauchs wird der persönliche Gesamtverbrauch in verschiedene Bereiche unterteilt.
              Unser Ziel ist es, die Eingabe für den Benutzer möglichst einfach zu gestalten. Deshalb ist es in einigen Bereichen notwendig Verallgemeinerungen zu treffen.
-             Zur Berechnung des persönlichen CO2-Verbrauchs pro Jahr sollen folgende Bereiche berücksichtig werden:""")
+             Zur Berechnung des persönlichen $CO_{2}$-Verbrauchs pro Jahr sollen folgende Bereiche berücksichtig werden:""")
     c1,c2,c3 = st.beta_columns([1,10,1])
     c2.markdown('<ol> <li>Nahrung</li><li>Wohnen</li><li>Mobilität</li><li>Konsum(Kleidung)</li>', unsafe_allow_html=True)
-    st.write("""Auf der Grundlage des persönlichen Verhaltens wird der individuelle CO2-Verbrauch berechnet.  
+    st.write("""Auf der Grundlage des persönlichen Verhaltens wird der individuelle $CO_{2}$-Verbrauch berechnet.  
              """)
     st.markdown("***")
     st.write("""
              ## Nahrung
-             Die Datengrundlage für die Berechnung des persönlichen CO2-Verbrauchs durch die Nahrung bildet die folgende Tabelle.
+             Die Datengrundlage für die Berechnung des persönlichen $CO_{2}$-Verbrauchs durch die Nahrung bildet die folgende Tabelle.
              """)
     c1,c2,c3 = st.beta_columns([1,3,1])
     image3= Image.open('Tab3_Nahrungswerte.PNG')
     c2.image(image3, width=700, clamp=False, channels='RGB', output_format='auto')
-    st.write("Zur Berechnung des persönlichen CO2-Verbrauchs durch die Nahrung werden vom Benutzer folgende Aspekte selbst angegeben:")
+    st.write("Zur Berechnung des persönlichen $CO_{2}$-Verbrauchs durch die Nahrung werden vom Benutzer folgende Aspekte selbst angegeben:")
     c1,c2,c3 = st.beta_columns([1,10,1])
     c2.markdown('<ol> <li>Verzehrmenge Fleisch pro Woche in kg</li><li>Regionale Lebensmittel</li>', unsafe_allow_html=True)
-    st.write("""Die Berechnung des CO2-Verbrauchs durch die Nahrung werden die durchschnittlichen jährlichen Verzehrmengen mit den entsprechenden CO2-Werten multipliziert und über alle Lebensmittelgruppen aufaddiert, wobei die Verzehrmenge Fleisch vom Benutzer angegeben wird. Entsprechend muss bei der Berechnung diese wöchentliche Angabe durch Multiplikation mit dem Faktor 53 (Anzahl der Wochen pro Jahr) berücksichtigt werden. Damit der Aspekt „2. Regionale und saisonale Lebensmittel“ in die Berechnung einfließen kann, werden gemäß [] die entsprechenden Faktoren aus Tabelle 4 einbezogen. 
+    st.write("""Die Berechnung des $CO_{2}$-Verbrauchs durch die Nahrung werden die durchschnittlichen jährlichen Verzehrmengen mit den entsprechenden $CO_{2}$-Werten multipliziert und über alle Lebensmittelgruppen aufaddiert, wobei die Verzehrmenge Fleisch vom Benutzer angegeben wird. Entsprechend muss bei der Berechnung diese wöchentliche Angabe durch Multiplikation mit dem Faktor 53 (Anzahl der Wochen pro Jahr) berücksichtigt werden. Damit der Aspekt „2. Regionale und saisonale Lebensmittel“ in die Berechnung einfließen kann, werden gemäß [4] die entsprechenden Faktoren aus Tabelle 4 einbezogen. 
              """)
     c1,c2,c3 = st.beta_columns([1,3,1])
     image4= Image.open('Tab4_regio.PNG')
     c2.image(image4, width=700, clamp=False, channels='RGB', output_format='auto')
     st.write("""
-             Zunächst wird so der CO2-Wert durch die Nahrung berechnet gemäß dem folgenden Zusammenhang.
+             Zunächst wird so der $CO_{2}$-Wert durch die Nahrung berechnet gemäß dem folgenden Zusammenhang.
              """)
     c1,c2,c3 = st.beta_columns([1,3,1])
     image5= Image.open('Formel_Essen.PNG')
     c2.image(image5, width=700, clamp=False, channels='RGB', output_format='auto')
     st.write("""
-             Es soll nicht nur der persönliche CO2-Verbrauch berechnet werden, sondern darüber hinaus soll dem Benutzer vorgeschlagen werden, wie er sein Verhalten verändern kann, um zu einem bestimmten Zeitpunkt unter dem pro Kopf CO2-Budget zu bleiben. In Bezug auf die Nahrung soll dabei, falls nötig und erwünscht die Verzehrmenge Fleisch reduziert werden, da ihr gemäß Tabelle 3 ein hoher CO2-Wert zugeordnet wird. Dabei soll eine Reduzierung der Fleischmenge nicht dazu führen, dass der Benutzer insgesamt weniger isst. Aus diesem Grund wird die reduzierte Menge auf die andren Lebensmittelgruppe verteilt. Um eine möglichst realistische Einschätzung hierzu zu geben, wird der tägliche Kalorien bedarf ausgehend von der angegebenen Verzehrmenge Fleisch und den durchschnittlichen Verzehrmengen der übrigen Lebensmittelgruppen berechnet. Zu der vorgeschlagenen Reduzierung der Verzehrmenge Fleisch wird die entsprechende Kalorienangabe ermittelt und auf die anderen Lebensmittelgruppen verteilt. Grundlage für diese Berechnungen bilden die folgenden Zusammenhänge. 
+             Es soll nicht nur der persönliche $CO_{2}$-Verbrauch berechnet werden, sondern darüber hinaus soll dem Benutzer vorgeschlagen werden, wie er sein Verhalten verändern kann, um zu einem bestimmten Zeitpunkt unter dem pro Kopf $CO_{2}$-Budget zu bleiben. In Bezug auf die Nahrung soll dabei, falls nötig und erwünscht die Verzehrmenge Fleisch reduziert werden, da ihr gemäß Tabelle 3 ein hoher $CO_{2}$-Wert zugeordnet wird. Dabei soll eine Reduzierung der Fleischmenge nicht dazu führen, dass der Benutzer insgesamt weniger isst. Aus diesem Grund wird die reduzierte Menge auf die andren Lebensmittelgruppe verteilt. Um eine möglichst realistische Einschätzung hierzu zu geben, wird der tägliche Kalorien bedarf ausgehend von der angegebenen Verzehrmenge Fleisch und den durchschnittlichen Verzehrmengen der übrigen Lebensmittelgruppen berechnet. Zu der vorgeschlagenen Reduzierung der Verzehrmenge Fleisch wird die entsprechende Kalorienangabe ermittelt und auf die anderen Lebensmittelgruppen verteilt. Grundlage für diese Berechnungen bilden die folgenden Zusammenhänge. 
              """)
     c1,c2,c3 = st.beta_columns([1,3,1])
     image6= Image.open('Formel_Fleischersatz.PNG')
@@ -436,68 +445,63 @@ elif navigation == 'Hintergrund: Fußabdruckberechnung':
     
     st.markdown("***")
     st.write("## Wohnen")
-    st.write("Die Datengrundlage für die Berechnung des persönlichen CO2-Verbrauchs durch den Aspekt Wohnen bildet die folgende Tabelle. ")
+    st.write("Die Datengrundlage für die Berechnung des persönlichen $CO_{2}$-Verbrauchs durch den Aspekt Wohnen bildet die folgende Tabelle. ")
     c1,c2,c3 = st.beta_columns([1,3,1])
     image7= Image.open('Tab5_Wohnen.PNG')
     c2.image(image7, width=700, clamp=False, channels='RGB', output_format='auto')
-    st.write("Der berechnete Wert des persönlichen CO2-Verbrauchs durch den Aspekt Wohnen soll personalisiert werden, indem der Benutzer folgende Angaben macht:")
+    st.write("Der berechnete Wert des persönlichen $CO_{2}$-Verbrauchs durch den Aspekt Wohnen soll personalisiert werden, indem der Benutzer folgende Angaben macht:")
     c1,c2,c3 = st.beta_columns([1,10,1])
     c2.markdown('<ol> <li>Wohnfläche pro Person</li><li>Eingestellte Raumtemperatur</li>', unsafe_allow_html=True)
-    st.write("""Mit diesen beiden Größen wird der CO2-Verbrauch des Benutzers für den Aspekt Wohnen durch die folgende Beziehung berechnet.""")
+    st.write("""Mit diesen beiden Größen wird der $CO_{2}$-Verbrauch des Benutzers für den Aspekt Wohnen durch die folgende Beziehung berechnet.""")
     c1,c2,c3 = st.beta_columns([1,3,1])
     image8= Image.open('Formel_Wohnen.PNG')
     c2.image(image8, width=700, clamp=False, channels='RGB', output_format='auto')
     
     st.markdown("***")
     st.write("## Mobilität")
-    st.write("Die Datengrundlage für die Berechnung des persönlichen CO2-Verbrauchs durch den Aspekt Mobilität bildet die folgende Tabelle. ")
+    st.write("Die Datengrundlage für die Berechnung des persönlichen $CO_{2}$-Verbrauchs durch den Aspekt Mobilität bildet die folgende Tabelle. ")
     c1,c2,c3 = st.beta_columns([1,3,1])
     image9= Image.open('Tab6_Mobilität.PNG')
     c2.image(image9, width=700, clamp=False, channels='RGB', output_format='auto')
-    st.write("""Außerdem wird der CO2-Wert in kgCO2 pro km für Flugzeuge gemäß [2] mit 0,197 angenommen. 
-             Zur Berechnung des persönlichen CO2-Verbrauchs unter dem Aspekt Mobilität sollen folgende Angaben des Benutzers berücksichtigt werden:
+    st.write("""Außerdem wird der $CO_{2}$-Wert in kg$CO_{2}$ pro km für Flugzeuge gemäß [4] mit 0,197 angenommen. 
+             Zur Berechnung des persönlichen $CO_{2}$-Verbrauchs unter dem Aspekt Mobilität sollen folgende Angaben des Benutzers berücksichtigt werden:
              """)
     c1,c2,c3 = st.beta_columns([1,10,1])
     c2.markdown('<ol> <li>Gefahrene Autokilometer pro Jahr pro Person</li><li>Flugstunden der letzten vier Jahre</li>', unsafe_allow_html=True)
-    st.write("Unter Berücksichtigung dieser Angaben wird der CO2-Wert gemäß dem folgenden Zusammenhang berechnet. ")
+    st.write("Unter Berücksichtigung dieser Angaben wird der $CO_{2}$-Wert gemäß dem folgenden Zusammenhang berechnet. ")
     c1,c2,c3 = st.beta_columns([1,3,1])
     image20= Image.open('Formel_Mobilität.PNG')
     c2.image(image20, width=700, clamp=False, channels='RGB', output_format='auto')
     
     st.markdown("***")
     st.write("## Konsum")
-    st.write("Die Datengrundlage für die Berechnung des persönlichen CO2-Verbrauchs durch den Konsum bildet die folgende Tabelle. ")
+    st.write("Die Datengrundlage für die Berechnung des persönlichen $CO_{2}$-Verbrauchs durch den Konsum bildet die folgende Tabelle. ")
     c1,c2,c3 = st.beta_columns([1,3,1])
     image10= Image.open('Tab7_Konsum.PNG')
     c2.image(image10, width=700, clamp=False, channels='RGB', output_format='auto')
     st.write("Der Benutzer soll dabei folgende Angabe zu seinem Konsumverhalten machen:")
     c1,c2,c3 = st.beta_columns([1,10,1])
     c2.markdown('<ol> <li>Anzahl gekaufte Kleidungsstücke pro Jahr</li>', unsafe_allow_html=True)
-    st.write("Unter Berücksichtigung dieser Angabe wird der persönliche CO2-Verbrauch durch den Aspekt Konsum durch den folgenden Zusammenhang berechnet.")
+    st.write("Unter Berücksichtigung dieser Angabe wird der persönliche $CO_{2}$-Verbrauch durch den Aspekt Konsum durch den folgenden Zusammenhang berechnet.")
     c1,c2,c3 = st.beta_columns([1,3,1])
     image11= Image.open('Formel_Konsum.PNG')
     c2.image(image11, width=700, clamp=False, channels='RGB', output_format='auto')
     
-    st.markdown("***")
-    st.write("Quellen:")
-    st.write("[1] Fütterer, E. (2021). Kalorientabelle für Lebensmittel: Von Gemüse bis Fast Food. Verfügbar über: https://www.fitforfun.de/abnehmen/kalorientabelle-fuer-lebensmittel-307736.html (letzter Zugriff: 22.06.2021)")
-    st.write("[2] ")
-    st.write("[3] Keller, S. (2021). Maximale Geschwindigkeit der weltweit schnellsten Passagierflugzeuge der Welt. Verfügbar über https://de.statista.com/statistik/daten/studie/1056126/umfrage/schnellste-passagierflugzeuge-der-welt-nach-maximaler-geschwindigkeit/ (letzter Zugriff 23.06.2021)")
     
 elif navigation == "Hintergrund: Budgetberechnung":
     st.write("""
              ## Berechnung des pro Kopf Budgets (Deutschland)
-             Zunächst soll der Anteil der Bevölkerung am CO2-Gesamtverbrauch von Deutschland bestimmt werden. Dieser ermöglicht es uns im weiteren Verlauf ausgehend von künftigen Klimazielen des Landes das persönliche CO2-Budget pro Kopf zu berechnen und Handlungsempfehlungen zur Reduzierung des persönlichen CO2-Verbrauchs auszusprechen. 
-            Die folgende Tabelle bildet die Grundlage der Berechnung des Anteils der Bevölkerung am CO2-Gesamtverbrauch von Deutschland.
+             Zunächst soll der Anteil der Bevölkerung am $CO_{2}$-Gesamtverbrauch von Deutschland bestimmt werden. Dieser ermöglicht es uns im weiteren Verlauf ausgehend von künftigen Klimazielen des Landes das persönliche $CO_{2}$-Budget pro Kopf zu berechnen und Handlungsempfehlungen zur Reduzierung des persönlichen $CO_{2}$-Verbrauchs auszusprechen. 
+            Die folgende Tabelle bildet die Grundlage der Berechnung des Anteils der Bevölkerung am $CO_{2}$-Gesamtverbrauch von Deutschland.
             """)
     c1,c2,c3 = st.beta_columns([1,3,1])
     image12= Image.open('Tab1_Einwohnerzahlen.PNG')
     c2.image(image12, width=700, clamp=False, channels='RGB', output_format='auto')
-    st.write("Zunächst kann nun der gesamte durch die Bevölkerung verursachte CO2-Verbrauch $$(A_{Bev})$$ für die entsprechenden Jahre aus Tab. 1 berechnet werden. ")
+    st.write("Zunächst kann nun der gesamte durch die Bevölkerung verursachte $CO_{2}$-Verbrauch $A_{Bev}$ für die entsprechenden Jahre aus Tab. 1 berechnet werden. ")
     c1,c2,c3 = st.beta_columns([2,3,1])
     image13= Image.open('Formel_Bev1.PNG')
     c2.image(image13, width=300, clamp=False, channels='RGB', output_format='auto')
-    st.write("Somit kann der prozentuale Anteil der durch die Bevölkerung verursachten Emissionen $$(P_{Bev})$$ an den bundesweiten Emissionen bestimmt werden.")
+    st.write("Somit kann der prozentuale Anteil der durch die Bevölkerung verursachten Emissionen $P_{Bev}$ an den bundesweiten Emissionen bestimmt werden.")
     c1,c2,c3 = st.beta_columns([2,3,1])
     image14= Image.open('Formel_Bev2.PNG')
     c2.image(image14, width=300, clamp=False, channels='RGB', output_format='auto')
@@ -505,41 +509,89 @@ elif navigation == "Hintergrund: Budgetberechnung":
     c1,c2,c3 = st.beta_columns([1,3,1])
     image15= Image.open('Tab2_Einwohner.PNG')
     c2.image(image15, width=700, clamp=False, channels='RGB', output_format='auto')
-    st.write("Zuletzt wird der Mittelwert $(\overline{P_{Bev}})$ gebildet über alle so bestimmten Anteile des CO2-Verbrauchs der Bevölkerung. ")
+    st.write("Zuletzt wird der Mittelwert $\overline{P_{Bev}}$ gebildet über alle so bestimmten Anteile des $CO_{2}$-Verbrauchs der Bevölkerung. ")
     c1,c2,c3 = st.beta_columns([2,3,1])
     image16= Image.open('Wert_Bev.PNG')
     c2.image(image16, width=300, clamp=False, channels='RGB', output_format='auto')
-    st.write("""Dieser Wert sagt aus, dass der durch die Bevölkerung verursachte CO2-Verbrauch ungefähr 83% ausmacht. 
-             Er erlaubt es uns, für künftige bundesweite CO2-Budgets ein pro Kopf Budget vorherzusagen. """)
+    st.write("""Dieser Wert sagt aus, dass der durch die Bevölkerung verursachte $CO_{2}$-Verbrauch ungefähr 83% ausmacht. 
+             Er erlaubt es uns, für künftige bundesweite $CO_{2}$-Budgets ein pro Kopf Budget vorherzusagen. """)
     st.markdown("***")
     st.write("""
-             ## Künftige CO2-Budgets
-             Damit künftige pro Kopf CO2-Budgets berechnet werden können, soll hier das zu Grunde liegende Modell vorgestellt werden. Die Daten basieren auf dem Klimaschutzplan 2050, der vom Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU) veröffentlicht wurde [2]. Demnach sollen ausgehend vom Jahr 1990 bis 2030 die CO2-Emissionen mindestens um 55%, bis 2040 um 70% und bis 2050 um 80%-95% gesenkt werden. Die sich aus diesen Zielen ergebenden CO2-Budgets sind in Abbildung 1 dargestellt.  
+             ## Künftige $CO_{2}$-Budgets
+             Damit künftige pro Kopf $CO_{2}$-Budgets berechnet werden können, soll hier das zu Grunde liegende Modell vorgestellt werden. Die Daten basieren auf dem Klimaschutzplan 2050, der vom Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU) veröffentlicht wurde [2]. Demnach sollen ausgehend vom Jahr 1990 bis 2030 die CO2-Emissionen mindestens um 55%, bis 2040 um 70% und bis 2050 um 80%-95% gesenkt werden. Die sich aus diesen Zielen ergebenden $CO_{2}$-Budgets sind in Abbildung 1 dargestellt.  
              """)
     c1,c2,c3 = st.beta_columns([1,3,1])
     image17= Image.open('Emissionsziel.PNG')
     c2.image(image17, width=700, clamp=False, channels='RGB', output_format='auto')
-    st.write("Mit dieser Datengrundlage und dem zuvor ermittelten Anteil des CO2-Verbrauches der Bevölkerung kann der pro Kopf Ausstoß für künftige Szenarien ermittelt werden. ")
-    st.markdown("***")
-    st.write("Quellen:")
-    st.write("[1] statistica.de (abgerufen im Juni 2021)")
-    st.write("[2] Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU) (2019).  Klimaschutzplan 2050: Klimapolitische Grundsätze und Ziele der Bundesregierung (2.Auflage). BMU. Verfügbar über: https://www.bmu.de/fileadmin/Daten_BMU/Download_PDF/Klimaschutz/klimaschutzplan_2050_bf.pdf (letzter Zugriff: 22.06.2021)")
-
+    st.write("Mit dieser Datengrundlage und dem zuvor ermittelten Anteil des $CO_{2}$-Verbrauches der Bevölkerung kann der pro Kopf Ausstoß für künftige Szenarien ermittelt werden. ")
+    
 
 elif navigation == "Hintergrund: Datenvalidierung":
     st.write("""Nach dem Aufstellen des Modells ist es notwendig, die mit unserer Modellierung berechneten CO2-Verbrauchswerte auf ihre Sinnhaftigkeit zu überprüfen. 
-             Die CO2-Werte, die das Modell in den einzelnen Kategorien berechnet, sollen mit dem CO2-Rechner des Umweltbundesamtes [2] verglichen werden. 
-             Außerdem soll die mit dem Modell berechnete gesamte CO2-Verbrauch überprüft werden. Hierzu wird der pro Kopf Verbrauch aus dem Jahr 2019 [1] mit den entsprechenden Durchschnittswerten aus diesem Jahr simuliert.
+             Die $CO_{2}$-Werte, die das Modell in den einzelnen Kategorien berechnet, sollen mit dem CO2-Rechner des Umweltbundesamtes [6] verglichen werden. 
+             Außerdem soll die mit dem Modell berechnete gesamte CO2-Verbrauch überprüft werden. Hierzu wird der pro Kopf Verbrauch aus dem Jahr 2019 [1.1] mit den entsprechenden Durchschnittswerten aus diesem Jahr simuliert.
              """)
-    st.markdown("***")
-    st.write("Quellen:")
-    st.write("[1] statistica.de (abgerufen im Juli 2021)")
-    st.write("[2] UBA CO2-Rechner (abgerufen im Juli 2021)")
+    st.write("""
+             Tabelle 9 vergleicht die laut „Fußabdruck der Zukunft“ berechneten $CO_{2}$-Werte
+             der jeweiligen verwendeten Kategorien mit den entsprechenden Werten des „$CO_{2}$-Rechners 
+             des Umweltbundesamtes“ [6]. Die Grundlage für die berechneten $CO_{2}$-Werte bilden 
+             die Durchschnittswerte aus Tabelle 8. Man kann aus den Werten in Tabelle 9 ablesen, 
+             dass für die Kategorien Nahrung und Mobilität die Werte der beiden Rechner sehr gut
+             übereinstimmen. Eine etwas größere Abweichung zeigt sich im Bereich Wohnen.
+             Auffällig sind die großen Unterschiede der $CO_{2}$-Werte in der Kategorie Konsum, 
+             die auch zu einer großen Abweichung bei den Gesamtwerten führen. Der Wert des 
+             „$CO_{2}$-Rechners des Umweltbundesamtes“ ist sehr viel größer, da bei der Berechnung
+             laut „Fußabdruck der Zukunft“ nur die gekauften Kleidungsstücke berücksichtigt
+             werden. In diesem Bereich fließen also beim „$CO_{2}$-Rechner des Umweltbundesamtes“ 
+             weitere Aspekte mit ein, die den größeren $CO_{2}$-Wert erklären.   
+
+             """)
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image_tab8= Image.open('Tab8.PNG')
+    c2.image(image_tab8, use_column_width=True,width=700, clamp=False, channels='RGB', output_format='auto')
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image_tab9= Image.open('Tab9.PNG')
+    c2.image(image_tab9,use_column_width=True, width=700, clamp=False, channels='RGB', output_format='auto')
+    
+    st.write("""
+             Tabelle 10 vergleicht die Werte laut „Fußabdruck der Zukunft“ berechneten $CO_{2}$-Gesamtwerte mit dem pro Kopf $CO_{2}$-Verbrauch aus dem Jahr 2019 laut „Statistica“. Auch bilden die Werte aus Tabelle 8 die Grundlage der Berechnung laut „Fußabdruck der Zukunft“. Die beiden Gesamtwerte stimmen fast überein. Das zeigt, dass der $CO_{2}$-Wert aus dem Jahr 2019 sehr gut mit dem Rechner reproduziert werden konnte. 
+             Die Abweichungen zu anderen Rechnern können damit erklärt werden, dass „Fußabdruck der Zukunft“ keine öffentlichen Emissionen einbezieht. Außerdem werden oft im Bereich Konsum noch weitere Aspekte abgefragt und berücksichtigt.  
+             Insgesamt hat die Validierung gezeigt, dass die durch „Fußabdruck der Zukunft“ berechneten $CO_{2}$-Werte zu den Werten aus anderen Rechnern passen. Der Gesamtwert kann frühere $CO_{2}$-Werte sehr gut nachbilden. Somit kann angenommen werden, dass er für die Zukunft gute Vorhersagen treffen wird. 
+
+             """)
+    c1,c2,c3 = st.beta_columns([1,3,1])
+    image_tab10= Image.open('Tab10.PNG')
+    c2.image(image_tab10, use_column_width=True,width=700, clamp=False, channels='RGB', output_format='auto')
+    
     
 else:
     
     #link = '[GitHub](http://github.com)'
     #st.markdown(link, unsafe_allow_html=True)
+    st.markdown("<font size = 4> Quellen </font>",unsafe_allow_html=True)
+    st.markdown("""
+                [1]: Statistica (2021). Bevölkerung: Einwohnerzahl von Deutschland von 1990 bis 2020. Verfügbar über: https://de.statista.com/statistik/daten/studie/2861/umfrage/entwicklung-der-gesamtbevoelkerung-deutschlands/#professional (letzter Zugriff: 07.07.2021)
+                <br>[1.0]: Statistica (2021). Höhe der Treibhausgas-Emissionen in Deutschland in den Jahren 1990 bis 2020. Verfügbar über: https://de.statista.com/statistik/daten/studie/76558/umfrage/entwicklung-der-treibhausgas-emissionen-in-deutschland/ (letzter Zugriff: 07.07.2021)
+                <br>[1.1]: Statistica (2021). Entwicklung der Pro-Kopf-CO2-Emissionen in Deutschland in den Jahren 1990 bis 2019. Verfügbar über: https://de.statista.com/statistik/daten/studie/153528/umfrage/co2-ausstoss-je-einwohner-in-deutschland-seit-1990/ (letzter Zugriff: 07.07.2021)
+                <br>[1.2]: Statistica (2021). Pro-Kopf-Konsum von Obst in Deutschland in den Wirtschaftsjahren 2004/05 bis 2018/19. Verfügbar über: https://de.statista.com/statistik/daten/studie/6300/umfrage/pro-kopf-verbrauch-von-obst-in-deutschland/ (letzter Zugriff: 07.07.2021)
+                <br>[1.3]: Statistica (2021). Pro-Kopf-Konsum von Gemüse in Deutschland in den Jahren 1950/51 bis 2019/20. Verfügbar über: https://de.statista.com/statistik/daten/studie/176731/umfrage/pro-kopf-verbrauch-von-gemuese-in-deutschland/ (letzter Zugriff: 07.07.2021)
+                <br>[1.4]: Statistica (2021). Pro-Kopf-Konsum von Milch und Milcherzeugnissen in Deutschland nach Art in den Jahren 2017 bis 2019. Verfügbar über: https://de.statista.com/statistik/daten/studie/318237/umfrage/pro-kopf-konsum-von-milch-und-milcherzeugnissen-in-deutschland-nach-art/ (letzter Zugriff: 07.07.2021)
+                <br>[1.5]: Statistica (2021). Pro-Kopf-Konsum von Kartoffeln in Deutschland in den Jahren 1950/51 bis 2019/20. Verfügbar über: https://de.statista.com/statistik/daten/studie/175422/umfrage/pro-kopf-verbrauch-von-kartoffeln-in-deutschland/ (letzter Zugriff: 07.07.2021)
+                <br>[1.6]: Statistica (2021). Pro-Kopf-Konsum von Eiern in Deutschland in den Jahren 2004 bis 2020. Verfügbar über: https://de.statista.com/statistik/daten/studie/180345/umfrage/eier---nahrungsverbrauch-pro-kopf-seit-2004/ (letzter Zugriff: 07.07.2021)
+                <br>[1.7]: Statistica (2021). Pro-Kopf-Konsum von Brotgetreide in Deutschland in den Jahren 1951/51 bis 2019/20. Verfügbar über: https://de.statista.com/statistik/daten/studie/175411/umfrage/pro-kopf-verbrauch-von-brotgetreide-in-deutschland-seit-1935/ (letzter Zugriff: 07.07.2021)
+                <br>[1.8]: Statistica (2021). Fleischverbrauch in Deutschland pro Kopf in den Jahren 1991 bis 2020. Verfügbar über: https://de.statista.com/statistik/daten/studie/36573/umfrage/pro-kopf-verbrauch-von-fleisch-in-deutschland-seit-2000/ (letzter Zugriff: 07.07.2021)
+                <br>[1.9]: Statistica (2021). Pro-Kopf-Konsum von Fisch und Fischerzeugnissen in Deutschland in den Jahren 1980 bis 2019. Verfügbar über: https://de.statista.com/statistik/daten/studie/1905/umfrage/entwicklung-des-pro-kopf-verbrauchs-an-fisch-in-deutschland/ (letzter Zugriff: 07.07.2021)
+                <br>[2]: Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU) (2019).  Klimaschutzplan 2050: Klimapolitische Grundsätze und Ziele der Bundesregierung (2.Auflage). BMU. Verfügbar über: https://www.bmu.de/fileadmin/Daten_BMU/Download_PDF/Klimaschutz/klimaschutzplan_2050_bf.pdf (letzter Zugriff: 22.06.2021)
+                <br>[3]: Fütterer, E. (2021). Kalorientabelle für Lebensmittel: Von Gemüse bis Fast Food. Verfügbar über: https://www.fitforfun.de/abnehmen/kalorientabelle-fuer-lebensmittel-307736.html (letzter Zugriff: 22.06.2021)
+                <br>[4]: Kleinhückelkotten, S. & Neitzke, H.-P. (2016). Berechnung individueller Pro-Kopf-Verbräuche natürlicher Ressourcen nach Konsumbereichen. Umweltbundesamt. Verfügar über: https://www.umweltbundesamt.de/sites/default/files/medien/378/publikationen/texte_39_2016_anlagen_repraesentative_erhebung_von_pro-kopf-verbraeuchen_natuerlicher_ressourcen.pdf (letzter Zugriff: 07.07.2021)
+                <br>[5]: Statistica (2021). Maximale Geschwindigkeit der weltweit schnellsten Passagierflugzeuge der Welt. Verfügbar über https://de.statista.com/statistik/daten/studie/1056126/umfrage/schnellste-passagierflugzeuge-der-welt-nach-maximaler-geschwindigkeit/ (letzter Zugriff: 07.07.2021)
+                <br>[6]: Umweltbundesamt. Co2-Rechner des Umweltbundesamtes. Verfügbar über: https://uba.co2-rechner.de/de_DE/start#panel-calc (letzter Zugriff: 07.07.2021) 
+                <br>[7]: Fußabdruck der Zukunft (2021). Verfügbar über https://share.streamlit.io/paulaflschr/footprintred/main/footprintapp.py (letzter Zugriff: 07.07.2021)
+                <br>[8]: Statistica (2021). Wohnfläche je Einwohner in Wohnungen in Deutschland von 1991 bis 2019. Verfügbar über: https://de.statista.com/statistik/daten/studie/36495/umfrage/wohnflaeche-je-einwohner-in-deutschland-von-1989-bis-2004/ (letzter Zugriff: 07.07.2021)
+                <br>[9]: Statistica (2021). Durchschnittliche Raumtemperatur in Haushalten in Deutschland, Österreich und der Schweiz im Jahr 2019. Verfügbar über: https://de.statista.com/statistik/daten/studie/1072340/umfrage/raumtemperatur-in-haushalten-in-deutschland-oesterreich-und-der-schweiz/ (letzter Zugriff: 07.07.2021)
+                <br>[10]: Zippmann, V. (2020): In Mecklenburg-Vorpommern fahren Autofahrer am weitesten. Verfügbar über: https://www.autozeitung.de/jaehrliche-fahrleistung-197899.html (letzter Zugriff: 07.07.2021)
+                <br>[11]: Statistica (2021). Die Welt kauft in der Pandemie weniger Kleidung. Verfügbar über: https://de.statista.com/infografik/24066/geschaetzter-durchschnittlicher-pro-kopf-absatz-von-kleidungsstuecken/ (letzter Zugriff: 07.07.2021)
+                """, unsafe_allow_html=True)
     st.write("von Lena Bill & Paula Fleischer")
     
     

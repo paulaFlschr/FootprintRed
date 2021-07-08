@@ -66,28 +66,74 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung):
         max_co2 =  -184*(jahr-2040)+3830
         
     co2_essen = [0.36*faktor_nahrung, 0.437*faktor_nahrung, 7.34*faktor_nahrung, 0.82*faktor_nahrung, 3.23*faktor_nahrung, 1.931*faktor_nahrung]
-    
+    #prefunterschied
+    max_prefdiff = 0
+    for i in range(4):
+        for j in range(4-i):
+            if max_prefdiff < abs(pref[i]-pref[i+1+j]):
+                max_pref_diff = abs(pref[i]-pref[i+1+j])
+        
     # Generiere Lineares Programm------------------------------------------------
-    c = [-pref[0],-pref[1],-pref[2],-pref[3],-pref[4],0,0,0,0,0,0,0]
+# =============================================================================
+#     c = [-pref[0],-pref[1],-pref[2],-pref[3],-pref[4],0,0,0,0,0,0,0]
+#     
+#     A_ub = [[co2_akt[0],co2_akt[1],co2_akt[2],co2_akt[3],co2_akt[4],co2_essen[0],co2_essen[1],co2_essen[2],co2_essen[3],co2_essen[4],co2_essen[5],0.429*akt[3]*80],
+#             [-akt[0],0,0,0,0,0,0,0,0,0,0,0],
+#             [0,-akt[2],0,0,0,0,0,0,0,0,0,0],
+#             [0,0,-akt[4],0,0,0,0,0,0,0,0,0],
+#             [0,0,0,-akt[5],0,0,0,0,0,0,0,0],
+#             [0,0,0,0,-akt[6],0,0,0,0,0,0,0]]
+#     b_ub = [max_co2,-min_vals[0],-min_vals[1],-min_vals[2],-min_vals[3],-min_vals[4]]
+#     A_eq = [[-akt[0]*53*1860*1/6*1/340,0,0,0,0,1,0,0,0,0,0,0],
+#             [-akt[0]*53*1860*1/6*1/660,0,0,0,0,0,1,0,0,0,0,0],
+#             [-akt[0]*53*1860*1/6*1/1630,0,0,0,0,0,0,1,0,0,0,0],
+#             [-akt[0]*53*1860*1/6*1/3040,0,0,0,0,0,0,0,1,0,0,0],
+#             [-akt[0]*53*1860*1/6*1/860,0,0,0,0,0,0,0,0,1,0,0],
+#             [-akt[0]*53*1860*1/6*1/1370,0,0,0,0,0,0,0,0,0,1,0]]
+#     b_eq = [0.273*365+akt[0]*53*1860*1/6*1/340, 0.202*365+akt[0]*53*1860*1/6*1/660, 0.427*365+akt[0]*53*1860*1/6*1/660, 0.212*365+akt[0]*53*1860*1/6*1/3040, 0.151*365+akt[0]*53*1860*1/6*1/860, 0.04*365+akt[0]*53*1860*1/6*1/1370]
+#     
+# =============================================================================
+    c = [-pow(pref[0],2),-pow(pref[1],2),-pow(pref[2],2),-pow(pref[3],2),-pow(pref[4],2),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     
-    A_ub = [[co2_akt[0],co2_akt[1],co2_akt[2],co2_akt[3],co2_akt[4],co2_essen[0],co2_essen[1],co2_essen[2],co2_essen[3],co2_essen[4],co2_essen[5],0.429*akt[3]*80],
-            [-akt[0],0,0,0,0,0,0,0,0,0,0,0],
-            [0,-akt[2],0,0,0,0,0,0,0,0,0,0],
-            [0,0,-akt[4],0,0,0,0,0,0,0,0,0],
-            [0,0,0,-akt[5],0,0,0,0,0,0,0,0],
-            [0,0,0,0,-akt[6],0,0,0,0,0,0,0]]
-    b_ub = [max_co2,-min_vals[0],-min_vals[1],-min_vals[2],-min_vals[3],-min_vals[4]]
-    A_eq = [[-akt[0]*53*1860*1/6*1/340,0,0,0,0,1,0,0,0,0,0,0],
-            [-akt[0]*53*1860*1/6*1/660,0,0,0,0,0,1,0,0,0,0,0],
-            [-akt[0]*53*1860*1/6*1/1630,0,0,0,0,0,0,1,0,0,0,0],
-            [-akt[0]*53*1860*1/6*1/3040,0,0,0,0,0,0,0,1,0,0,0],
-            [-akt[0]*53*1860*1/6*1/860,0,0,0,0,0,0,0,0,1,0,0],
-            [-akt[0]*53*1860*1/6*1/1370,0,0,0,0,0,0,0,0,0,1,0]]
+    A_ub = [[co2_akt[0],co2_akt[1],co2_akt[2],co2_akt[3],co2_akt[4],co2_essen[0],co2_essen[1],co2_essen[2],co2_essen[3],co2_essen[4],co2_essen[5],0.429*akt[3]*80,0,0,0,0,0,0,0,0,0,0],
+            [-akt[0],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,-akt[2],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,-akt[4],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,-akt[5],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,-akt[6],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0, 0,0,0,0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,1,1],
+            [1,-1,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0],
+            [1,0,-1,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0],
+            [1,0,0,-1,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,0,0],
+            [1,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,0],
+            [0,1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0],
+            [0,1,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0],
+            [0,1,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0],
+            [0,0,1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0],
+            [0,0,1,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0],
+            [0,0,0,1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+            [-1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+            [-1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+            [-1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+            [-1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+            [0,-1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+            [0,-1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+            [0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+            [0,0,-1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+            [0,0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]]
+    b_ub = [max_co2,-min_vals[0],-min_vals[1],-min_vals[2],-min_vals[3],-min_vals[4],max_prefdiff^2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    A_eq = [[-akt[0]*53*1860*1/6*1/340,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [-akt[0]*53*1860*1/6*1/660,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [-akt[0]*53*1860*1/6*1/1630,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [-akt[0]*53*1860*1/6*1/3040,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [-akt[0]*53*1860*1/6*1/860,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [-akt[0]*53*1860*1/6*1/1370,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0]]
     b_eq = [0.273*365+akt[0]*53*1860*1/6*1/340, 0.202*365+akt[0]*53*1860*1/6*1/660, 0.427*365+akt[0]*53*1860*1/6*1/660, 0.212*365+akt[0]*53*1860*1/6*1/3040, 0.151*365+akt[0]*53*1860*1/6*1/860, 0.04*365+akt[0]*53*1860*1/6*1/1370]
     
     #Löse lineares Programm
-    res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=[(0,1),(0,1),(0,1),(0,1),(0,1),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None)], method='simplex')
-        
+    res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=[(0,1),(0,1),(0,1),(0,1),(0,1),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1)], method='simplex')
+       
     return res.x
        
 # 
@@ -100,7 +146,7 @@ c1.write("""
         # Fußabdruck der Zukunft
         ## Optimiere deinen ökologischen Fußabdruck
     """)
-navigation = c2.selectbox('', ["Startseite","Rechner: Fußabdruck-Optimierung", "Hintergrund: Persönlicher Fußabdruck", "Hintergrund: Budget Berechnung", "Hintergrund: Fußabdruck-Optimierung","Hintergrund: Datenvalidierung", "Rechner: Gesellschaftlicher Einfluss","Impressum"])
+navigation = c2.selectbox('', ["Startseite","Rechner: Fußabdruck-Optimierung", "Hintergrund: Fußabdruckberechnung", "Hintergrund: Budgetberechnung", "Hintergrund: Fußabdruck-Optimierung","Hintergrund: Datenvalidierung", "Rechner: Gesellschaftlicher Einfluss","Impressum"])
 st.markdown("***")
 hide_footer_style = """
     <style>
@@ -116,26 +162,73 @@ if navigation == 'Startseite':
     c1,c2,c3 = st.beta_columns([2.5,6,2.5])
     imagestart= Image.open('Startseite.png')
     c2.image(imagestart,use_column_width=True, clamp=False, channels='RGB', output_format='auto')
-    
-    c2.video(data='https://www.youtube.com/watch?v=0msDfGBiAmQ&ab_channel=Helmholtz-Klima-Initiative', format='video/mp4', start_time=0)
-    
+    st.markdown("""<font size = 5>
+                Willkommen bei „Fußabdruck der Zukunft“. Hier kannst du deinen persönlichen
+                CO2-Fußabdruck berechnen. Außerdem findest du hier Infos rund um das Thema 
+                CO2-Verbrauch und wir erklären dir, wie unser Rechner funktioniert. Schau dir
+                zum Einstieg gerne das Video „Klimaschutz im Alltag – Welchen Einfluss haben 
+                wir?“ an.</font><br><br>
+                """, unsafe_allow_html=True)
+    c1, c2 = st.beta_columns(2)
+    c1.video(data='https://www.youtube.com/watch?v=0msDfGBiAmQ&ab_channel=Helmholtz-Klima-Initiative', format='video/mp4', start_time=0)
+    c2.video(data='https://www.youtube.com/watch?v=CR3q9vnSlFQ&ab_channel=StadtwerkeT%C3%BCbingen', format='video/mp4', start_time=0)
+    st.markdown("""<br>
+                Im November 2016 beschloss das Bundeskabinett den Klimaschutzplan 2050. Darin
+                sind die Klimaschutzziele der Bundesrepublik Deutschland festgelegt, die im
+                Einklang mit dem Pariser Übereinkommen stehen. So sollen die 
+                Treibhausgasemissionen bis 2050 um 80 bis 95 Prozent reduziert werden im 
+                Vergleich zum Wert von 1990. Die Einhaltung dieses Ziels stellt nicht nur die
+                Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch 
+                großen Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf 
+                Einschränkungen einlassen müssen und einen Beitrag zum Klimaschutz 
+                leisten müssen. <center><b> Doch wie könnten diese Einschränkungen für die Bevölkerung 
+                von Deutschland aussehen? </b></center> Unsere Modellierung basiert auf dem 
+                bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. 
+                """, unsafe_allow_html=True)
 
 elif navigation == 'Hintergrund: Fußabdruck-Optimierung':
-    st.write("""
-             ## Umsetzung und Grundsätze der Modellierung
-             Neben der Auskunft über den persönlichen CO2-Verbrauch pro Jahr soll mit der Modellierung eine Handlungsempfehlung gegeben werden, wie das Verhalten verändert könnte, um das CO2-Ziel einzuhalten. 
-             """)
-    st.write("""
-             Dabei werden zu diesen Bereichen vom Benutzer bestimmte Angaben abgefragt, die die Höhe des Verbrauchs bestimmen. 
-             Damit die Empfehlungen für das künftige Verhalten zu den Bedürfnissen des Benutzers passen, können ebenfalls Angaben dazu gemacht werden, wie wichtig es dem Benutzer ist, bestimmte Aspekte beizubehalten. So soll sichergestellt werden, dass der Vorschlag zur Anpassung des persönlichen Verhaltens auch umgesetzt werden kann. 
-             """)
-    st.markdown("""
-                $$\addConstraint{le_{i_{1}i_{2}j}}{\leq e_{i_{1}j},\quad}{i_{1},i_{2} = 1,\dots,n; \ j=1 ,\dots, k}\end{equation}$$
-                $\addConstraint{\displaystyle\sum\limits_{i=0}^{4}var_{i} \cdot co_{2}\_akt_{i} + \displaystyle\sum\limits_{i=5}^{11}var_{i} \cdot co_{2}\_ess_{i} + 0.249 \cdot akt_{3} \cdot 80}{\leq}{max\_co_{2}}$
+    st.write("""Ziel unserer Optimierung ist es, dem Benutzer individuelle Handlungsempfehlungen 
+                über die Verringerung seines $CO_{2}$-Ausstoßes zu geben. Diese Empfehlungen 
+                sollen von den Präferenzen des Nutzers abhängig sein.
                 """)
-             
+    st.markdown("""
+                Unser Modell deckt fünf Bereiche ab, für welche Empfehlungen gegeben werden:<br>
+                <ol><li>Fleischkonsum</li><li>Heizen</li><li>Autokilometer</li><li>Flugstunden</li><li>Kleiderkonsum</li></ol><br>
+                Dazu erhalten wir als Eingabedaten verschiedene Informationen, 
+                die in vier Bereiche unterteilt werden können:<br>
+                <ol><li>aktuelle Nutzdaten</li><li>Präferenzen</li><li>Minimalwerte</li><li>Optimierungsjahr</li></ol><br>
+                Aus diesen Daten erstellen wir ein Optimierungsmodell.<br>""",unsafe_allow_html=True)
+    st.write("""Schritt 1: Eingabedaten verarbeiten<br>
+                Aktuelle Nutzdaten: Für unser Modell benötigen wir die $CO_{2}$-Emissionen, 
+                die durch die einzelnen Handlungen erzeugt werden. Aus diesen berechnen wir 
+                die aktuellen $CO_{2}$-Emissionen der einzelnen Komponenten. Wie wir das berechnen
+                und welche Daten wir nutzen findest du in Abschnitt 'Hintergrund: 
+                Fußabdruckberechnung'.""")
+    st.write("""Als Ergebnis erhalten wir die Werte co2akt$_{i}$ mit $i \in$ I = 
+                \{Fleisch, Heizen, Auto, Flugzeug, Kleidung\}, sowie co2ess$_{j}$ mit 
+                $j \in$ J = \{Gemüse, Obst, Milchprodukte, Brot, Kartoffeln, Eier\} und 
+                co2strom.""")
+    st.write("""Optimierungsjahr: Anhand des Optimierungsjahres berechnen wir den maximal 
+                möglichen $CO_{2}$-Ausstoß des Nutzers, d.h. sein $CO_{2}$-Budget. Wie wir das 
+                berechnen und welche Daten wir nutzen findest du in Abschnitt 'Hintergrund: 
+                    Budgetberechnung'.""")
+    st.write("""Als Ergebnis erhalten wir den Wert maxco2.
+                Schritt 2: Variablen einführen<br>
+                Die Handlungsempfehlungen für den Nutzer werden zunächst als Prozentsätze 
+                berechnet. Diese geben an, auf wie viel Prozent der Nutzer seinen Verbrauch 
+                im Vergleich zum vorherigen Verbrauch reduzieren muss, um das $CO_{2}$-Budget 
+                einzuhalten. Dazu führen wir die folgenden Variablen ein:
+                var$$_{i}$$ mit $$i \in I$$ = \{Fleisch, Heizen, Auto, Flugzeug, Kleidung\}""")
+           
+                
+      
 elif navigation == "Rechner: Fußabdruck-Optimierung":
-    
+    st.write("""
+             Hier kannst du deinen aktuellen CO2-Fußabdruck berechnen. Um dem Klimawandel 
+             entgegenzuwirken, muss aber in der Zukunft der CO2-Ausstoß sinken. Was das für 
+             deinen CO2-Fußabdruck heißt, wollen wir dir hier zeigen. Befolge dazu unsere 
+             Schritt-für-Schritt-Anleitung. Und los geht’s!
+             """)
     st.markdown("""Befolge die folgenden Schritte und wir sagen dir, was du tun kannst, um deine $CO_{2}$-Emissionen
                 unter eine von dir gewählte Grenze zu verringern.""")
     c1,c2,c3 = st.beta_columns((1,5,1))
@@ -212,11 +305,11 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
         if checkbox2:
             st.markdown("""
                         <font size="5"><b>Schritt 3: Optimierung-Gib Präferenzen an</b> </font><br>
-                        Da wir wollen, dass das ganze für dich möglichst
-                          angenehm ist, brauchen wir Informationen darüber, wie bedeutsam welcher Aspekt in deinem 
-                          Leben für dich ist. Dafür kannst du Punkte zwischen 1 und 10 für die einzelnen
-                          Aspekte vergeben, wobei 10 sehr wichtig 
-                          und 1 gar nicht wichtig bedeutet. 
+                        Wir wollen, dass die Optimierung zu dir passt und für dich angenehm ist. 
+                        Teile uns deshalb hier mit, wie wichtig die einzelnen Aspekte in deinem 
+                        Leben für dich sind. Dazu kannst du Punkte zwischen 1 und 10 für die 
+                        einzelnen Aspekte vergeben. Dabei bedeutet 10 „sehr wichtig“ und 1 
+                        „gar nicht wichtig“. 
                 """,unsafe_allow_html=True)
                
             remaining_prefs=[1,2,3,4,5,6,7,8,9,10]
@@ -231,10 +324,12 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
             if checkbox3:
                 st.markdown("""
                          <font size="5"><b>Schritt 4: Optimierung-Jahr festlegen</b> </font><br>
-                                  Über den Schieberegler kannst du das Jahr auswählen, für welches du deinen Fußabdruck 
-                                  optimieren möchtest. Wählst du also beispielweise das Jahr 2030, so wird dein $CO_{2}$ Fußabdruck
-                                  so weit heruntergesetzt, dass du unter dem Pro-Kopf-$CO_{2}$-Budget von 2030 liegst.
-                        """,unsafe_allow_html=True)
+                                  Jetzt wollen wir gemeinsam in die Zukunft schauen. Hier kannst 
+                                  du ein Jahr auswählen, für das du gerne wissen möchtest, wie 
+                                  dein Fußabdruck aussehen sollte. Wählst du beispielsweise das 
+                                  Jahr 2030, so wird dein CO2-Fußabdruck so weit heruntergesetzt,
+                                  dass du unter dem Pro-Kopf-CO2-Budget von 2030 liegst.
+                                  """,unsafe_allow_html=True)
                 
                 jahr = st.slider(label='Jahr', min_value=2021,max_value=2050,step=1)
                 
@@ -248,6 +343,7 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                     
                     
                     solution = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung)
+                    st.write(solution)
                 
                     st.markdown("***")
                     st.markdown("""
@@ -259,38 +355,38 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                             <b>Super! Dein aktueller Fußabdruck liegt bereits unter der geforderten CO2-Grenze. 
                             Das heißt natürlich nicht, dass du garnichts mehr tun kannst und sollst.</b>
                             """,unsafe_allow_html=True)
-                    if solution[0]<1:
-                        reduktion0 = 100 - round(solution[0],4)
+                    if round(solution[0],4)<1:
+                        reduktion0 = round((1 - solution[0])*100,2)
                         st.markdown("""
                             <b>Reduziere deinen Fleisch- und Fischkonsum um """+str(reduktion0)+""" %. </b><br>
                             Suche doch mal im Internet nach vegetarischen Rezepten. Dort gibt es eine rießige Auswahl, da ist
                             sicher etwas dabei was dir schmecken könnte ;)
                             """,unsafe_allow_html=True)
-                    if solution[1]<1:
-                        reduktion1 = 100 - round(solution[1],4)
+                    if round(solution[1],4)<1:
+                        reduktion1 = round((1 - solution[1])*100,2)
                         st.markdown("""
                             <b>Reduziere deine Zimmerwärme um """+str(reduktion1)+""" %.</b> <br>
                             Mit ein paar dicken Socken, einem dicken Pulli und einem leckerer Tee eingekuschtel in eine
                             flauschige Decke. Klimaschutz muss nicht immer ungemütlich sein.
                             """,unsafe_allow_html=True)
-                    if solution[2]<1:
-                        reduktion2 = 100 - round(solution[2],4)
+                    if round(solution[2],4)<1:
+                        reduktion2 = round((1 - solution[2])*100,2)
                         st.markdown("""
                             <b>Reduziere deine Autokilometer um """+str(reduktion2)+""" %. </b><br>
                             Kurze Strecken kannst du mit dem Fahrrad fahren oder zu Fuß gehen. Das hält gleichzeitig noch
                             fit und gesund. Nimm doch für längere Strecken einfach mal den Bus oder die Bahn. Das kann
                             manchmal auch viel entspannter sein.
                             """,unsafe_allow_html=True)
-                    if solution[3]<1:
-                        reduktion3 = 100 - round(solution[3],4)
+                    if round(solution[3],4)<1:
+                        reduktion3 = round((1 - solution[3])*100,2)
                         st.markdown("""
                             <b>Reduziere deine Flugstunden um """+str(reduktion3)+""" %. </b><br>
                             Fliegen ist besonders klimaschädlich. Natürlich heißt das nicht, dass du garnicht mehr weiter
                             weg kannst. Aber überlege doch mal ob es vielleicht Alternativen gibt. Urlaubsziele lassen sich
                             zum Beispiel auch in Deutschland viele schöne finden.
                             """,unsafe_allow_html=True)
-                    if solution[4]<1:
-                        reduktion4 = 100 - round(solution[4],4)
+                    if round(solution[4],4)<1:
+                        reduktion4 = round((1 - solution[4])*100,2)
                         st.markdown("""
                             <b>Reduziere deinen Konsum um """+str(reduktion4)+""" %.</b> <br>
                             Weniger Kleidungsstücke und dafür hochwertige sind deutlich besser für das Klima. Seien wir mal
@@ -299,7 +395,7 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
     
     
 # Pro Kopf Budget ---------------------------------------------------------------------------------------------------------
-elif navigation == 'Hintergrund: Persönlicher Fußabdruck':
+elif navigation == 'Hintergrund: Fußabdruckberechnung':
     st.write("""
              ## Berechnung des persönlichen CO2-Verbrauchs
              Zur Ermittlung des individuellen CO2-Verbrauchs wird der persönliche Gesamtverbrauch in verschiedene Bereiche unterteilt.
@@ -388,7 +484,7 @@ elif navigation == 'Hintergrund: Persönlicher Fußabdruck':
     st.write("[2] ")
     st.write("[3] Keller, S. (2021). Maximale Geschwindigkeit der weltweit schnellsten Passagierflugzeuge der Welt. Verfügbar über https://de.statista.com/statistik/daten/studie/1056126/umfrage/schnellste-passagierflugzeuge-der-welt-nach-maximaler-geschwindigkeit/ (letzter Zugriff 23.06.2021)")
     
-elif navigation == "Hintergrund: Budget Berechnung":
+elif navigation == "Hintergrund: Budgetberechnung":
     st.write("""
              ## Berechnung des pro Kopf Budgets (Deutschland)
              Zunächst soll der Anteil der Bevölkerung am CO2-Gesamtverbrauch von Deutschland bestimmt werden. Dieser ermöglicht es uns im weiteren Verlauf ausgehend von künftigen Klimazielen des Landes das persönliche CO2-Budget pro Kopf zu berechnen und Handlungsempfehlungen zur Reduzierung des persönlichen CO2-Verbrauchs auszusprechen. 

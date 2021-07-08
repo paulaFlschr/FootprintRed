@@ -350,7 +350,7 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                             <font size="5"><b>Dein Ergebnis</b> </font><br>
                             """,unsafe_allow_html=True)
                 
-                    if solution[0]==1 and solution[1]==1 and solution[2]==1 and solution[3]==1 and solution[4]==1:
+                    if round(solution[0])==1 and round(solution[1])==1 and round(solution[2])==1 and round(solution[3])==1 and round(solution[4])==1:
                         st.markdown("""
                             <b>Super! Dein aktueller Fußabdruck liegt bereits unter der geforderten CO2-Grenze. 
                             Das heißt natürlich nicht, dass du garnichts mehr tun kannst und sollst.</b>

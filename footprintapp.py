@@ -604,7 +604,7 @@ elif navigation == "Rechner: Gesellschaftlicher Einfluss":
     
     st.write("### Fülle die Seitenleiste aus und schaut, was ihr alle zusammen bewirken könnt!!!")
     c1,c2 = st.beta_columns(2)
-    imagemensch= Image.open('Menschenkette.png')
+    imagemensch= Image.open('Menschenkette.PNG')
     c2.image(imagemensch,use_column_width=True, clamp=False, channels='RGB', output_format='auto')
     c1.image(imagemensch,use_column_width=True, clamp=False, channels='RGB', output_format='auto')
     

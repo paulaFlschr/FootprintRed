@@ -356,7 +356,7 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                     if round(solution[0],4)<1:
                         reduktion0 = round((1 - solution[0])*100,2)
                         c1,c2 = st.beta_columns((1,3))
-                        image_fleisch= Image.open('Red_Fleisch.JPG')
+                        image_fleisch= Image.open('Red_Fleisch.jpg')
                         c1.image(image_fleisch, width=100, clamp=False, channels='RGB', output_format='auto')
                         c2.markdown("""
                             <b>Reduziere deinen Fleisch- und Fischkonsum um """+str(reduktion0)+""" %. </b><br>
@@ -366,7 +366,7 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                     if round(solution[1],4)<1:
                         reduktion1 = round((1 - solution[1])*100,2)
                         c1,c2 = st.beta_columns((3,1))
-                        image_heizen= Image.open('Red_Heizen.JPG')
+                        image_heizen= Image.open('Red_Heizen.jpg')
                         c2.image(image_heizen, width=100, clamp=False, channels='RGB', output_format='auto')
                         c1.markdown("""
                             <b>Reduziere deine Zimmerwärme um """+str(reduktion1)+""" %.</b> <br>
@@ -384,7 +384,7 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                     if round(solution[3],4)<1:
                         reduktion3 = round((1 - solution[3])*100,2)
                         c1,c2 = st.beta_columns((1,3))
-                        image_flieg= Image.open('Red_Fliegen.JPG')
+                        image_flieg= Image.open('Red_Fliegen.jpg')
                         c1.image(image_flieg, width=100, clamp=False, channels='RGB', output_format='auto')
                         c2.markdown("""
                             <b>Reduziere deine Flugstunden um """+str(reduktion3)+""" %. </b><br>

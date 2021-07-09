@@ -341,8 +341,8 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                     
                     
                     solution,max_prefdiff = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung)
-                    st.write(solution)
-                    st.write(max_prefdiff)
+                    #st.write(solution)
+                    #st.write(max_prefdiff)
                 
                     st.markdown("***")
                     st.markdown("""
@@ -356,53 +356,58 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                             """,unsafe_allow_html=True)
                     if round(solution[0],4)<1:
                         reduktion0 = round((1 - solution[0])*100,2)
+                        red0 = round(akt[0]*solution[0],2)
                         c1,c2 = st.beta_columns((1,3))
                         image_fleisch= Image.open('Red_Fleisch.jpg')
                         c1.image(image_fleisch, width=200, clamp=False, channels='RGB', output_format='auto')
                         c2.markdown("""
-                            <b>Reduziere deinen Fleisch- und Fischkonsum um """+str(reduktion0)+""" %. </b><br>
+                            <b>Reduziere deinen Fleisch- und Fischkonsum um """+str(red0)+""" Kilogramm ("""+str(reduktion0)+ """ %). </b><br>
                             Suche doch mal im Internet nach vegetarischen Rezepten. Dort gibt es eine rießige Auswahl, da ist
                             sicher etwas dabei was dir schmecken könnte ;)
                             """,unsafe_allow_html=True)
                     if round(solution[1],4)<1:
                         reduktion1 = round((1 - solution[1])*100,2)
+                        red1 = round(akt[2]*solution[1],1)
                         c1,c2 = st.beta_columns((3,1))
                         image_heizen= Image.open('Red_Heizen.jpg')
                         c2.image(image_heizen, width=100, clamp=False, channels='RGB', output_format='auto')
                         c1.markdown("""
-                            <b>Reduziere deine Zimmerwärme um """+str(reduktion1)+""" %.</b> <br>
+                            <b>Reduziere deine Zimmerwärme auf """+str(red1)+""" Grad (um """+str(reduktion1)+""" %).</b> <br>
                             Mit ein paar dicken Socken, einem dicken Pulli und einem leckerer Tee eingekuschtel in eine
                             flauschige Decke. Klimaschutz muss nicht immer ungemütlich sein.
                             """,unsafe_allow_html=True)
                     if round(solution[2],4)<1:
                         reduktion2 = round((1 - solution[2])*100,2)
+                        red2 = round(akt[4]*solution[2])
                         c1,c2 = st.beta_columns((1,3))
                         image_fahrrad= Image.open('Red_Auto.jpg')
                         c1.image(image_fahrrad, width=100, clamp=False, channels='RGB', output_format='auto')
                         c2.markdown("""
-                            <b>Reduziere deine Autokilometer um """+str(reduktion2)+""" %. </b><br>
+                            <b>Reduziere deine Autokilometer um """+str(red2)+""" Kilometer ("""+str(reduktion2)+"""%). </b><br>
                             Kurze Strecken kannst du mit dem Fahrrad fahren oder zu Fuß gehen. Das hält gleichzeitig noch
                             fit und gesund. Nimm doch für längere Strecken einfach mal den Bus oder die Bahn. Das kann
                             manchmal auch viel entspannter sein.
                             """,unsafe_allow_html=True)
                     if round(solution[3],4)<1:
                         reduktion3 = round((1 - solution[3])*100,2)
+                        red3 = round(akt[5]*solution[3],1)
                         c1,c2 = st.beta_columns((3,1))
                         image_flieg= Image.open('Red_Fliegen.jpg')
                         c2.image(image_flieg, width=200, clamp=False, channels='RGB', output_format='auto')
                         c1.markdown("""
-                            <b>Reduziere deine Flugstunden um """+str(reduktion3)+""" %. </b><br>
+                            <b>Reduziere deine Flugstunden um """+str(red3)+""" Stunden ("""+str(reduktion3)+"""%). </b><br>
                             Fliegen ist besonders klimaschädlich. Natürlich heißt das nicht, dass du garnicht mehr weiter
                             weg kannst. Aber überlege doch mal ob es vielleicht Alternativen gibt. Urlaubsziele lassen sich
                             zum Beispiel auch in Deutschland viele schöne finden.
                             """,unsafe_allow_html=True)
                     if round(solution[4],4)<1:
                         reduktion4 = round((1 - solution[4])*100,2)
+                        red4 = round(akt[6]*solution[4])
                         c1,c2 = st.beta_columns((1,3))
                         image_konsum= Image.open('Red_Konsum.jpg')
                         c1.image(image_konsum, width=150, clamp=False, channels='RGB', output_format='auto')
                         c2.markdown("""
-                            <b>Reduziere deinen Konsum um """+str(reduktion4)+""" %.</b> <br>
+                            <b>Reduziere deinen Konsum um """+str(red4)+""" Kleidungsstrücke ("""+str(reduktion4)+""" %).</b> <br>
                             Weniger Kleidungsstücke und dafür hochwertige sind deutlich besser für das Klima. Seien wir mal
                             ehrlich, viele Sachen die wir einmal kaufen ziehen wir am Ende viel zu selten an...
                             """,unsafe_allow_html=True)
@@ -583,12 +588,37 @@ elif navigation == "Rechner: Gesellschaftlicher Einfluss":
     anzahl_einwohner = st.sidebar.text_input(label='Wie viele Einwohner:innen hat dein Ort oder deine Stadt?', value=0)
     st.sidebar.markdown("***")
     anzahl_motivierte = st.sidebar.slider('Wie viel Prozent aller Einwohner:innen kannst du zur Reduktion ihres CO2-Ausstoßes motivieren?',min_value=0,max_value=100,step=10, value=10)
-    reduktion = st.sidebar.slider('Um wie viel Prozent soll der Fußabdruck minimiert werden?',min_value=10,max_value=50,step=5, value=10)
+    st.sidebar.markdown("***")
+    
+    red_fleisch = st.sidebar.text_input('Wie viel kg Fleisch willst du pro Woche weniger essen?', value=0)
+    red_auto = st.sidebar.text_input('Wie viel km Auto willst du pro Jahr weniger fahren?',value=0)
+    red_flug = st.sidebar.text_input('Wie viel Stunden willst du in vier Jahren weniger fliegen?',value=0)
+    red_konsum = st.sidebar.text_input('Wie viel Kleidungsstücke willst du pro Jahr weniger kaufen?',value=0)
     
     menschen = round(float(anzahl_einwohner) * (anzahl_motivierte/100))
-    einsparen = round(menschen * (reduktion/100) * 8013)
-    st.markdown("<font size = 5> Wenn du "+str(menschen)+" Menschen motivierst, ihren Fußabdruck mit dir gemeinsam um "+str(reduktion)+
-                " % zu reduzieren, dann könnt ihr gemeinsam ungefähr "+str(einsparen)+" Kilogramm CO2 einsparen.<font>",unsafe_allow_html=True)
+    einsparen = round((float(red_fleisch) * 7.21*53) + (float(red_auto)*0.2045) + ((float(red_flug)*1049.8*0.197)/4) + (float(red_konsum)*8.45))*menschen
+    
+    c1,c2,c3 = st.beta_columns([2.5,6,2.5])
+    imageeinfluss= Image.open('GEinfluss.jpg')
+    c2.image(imageeinfluss,use_column_width=True, clamp=False, channels='RGB', output_format='auto')
+    
+    st.write("### Fülle die Seitenleiste aus und schaut, was ihr alle zusammen bewirken könnt!!!")
+    c1,c2 = st.beta_columns(2)
+    imagemensch= Image.open('Menschenkette.png')
+    c2.image(imagemensch,use_column_width=True, clamp=False, channels='RGB', output_format='auto')
+    c1.image(imagemensch,use_column_width=True, clamp=False, channels='RGB', output_format='auto')
+    
+    c1,c2,c3 = st.beta_columns([3,2,3])
+    checkbox_zusammen = c2.checkbox(label="Einfluss ausrechnen")
+    if checkbox_zusammen:
+        st.markdown("<font size = 5> Wenn du "+str(menschen)+" Menschen motivierst, ihren Fußabdruck mit dir gemeinsam wie angegeben zu reduzieren, dann könnt ihr gemeinsam ungefähr "+str(einsparen/1000)+" Tonnen CO2 einsparen.<font>""",unsafe_allow_html=True)
+    
+        c1,c2,c3 = st.beta_columns((1,3,1))
+        df = pd.DataFrame({'kg CO2':['nachher', 'voher'], 'val':[(menschen*8.013)-einsparen/1000, menschen*8.013]})
+        
+        fig = px.bar(df, x='val', y="kg CO2", orientation='h')
+        c2.plotly_chart(fig)
+        
     
 else:
     

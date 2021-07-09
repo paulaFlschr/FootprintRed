@@ -71,7 +71,7 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung):
     for i in range(4):
         for j in range(4-i):
             if max_prefdiff < abs(pref[i]-pref[i+1+j]):
-                max_pref_diff = abs(pref[i]-pref[i+1+j])
+                max_prefdiff = abs(pref[i]-pref[i+1+j])
         
     # Generiere Lineares Programm------------------------------------------------
 # =============================================================================
@@ -122,7 +122,7 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung):
             [0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
             [0,0,-1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
             [0,0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]]
-    b_ub = [max_co2,-min_vals[0],-min_vals[1],-min_vals[2],-min_vals[3],-min_vals[4],max_prefdiff^2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    b_ub = [max_co2,-min_vals[0],-min_vals[1],-min_vals[2],-min_vals[3],-min_vals[4],pow(max_prefdiff,2),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     A_eq = [[-akt[0]*53*1860*1/6*1/340,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [-akt[0]*53*1860*1/6*1/660,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [-akt[0]*53*1860*1/6*1/1630,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -132,14 +132,14 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung):
     b_eq = [0.273*365+akt[0]*53*1860*1/6*1/340, 0.202*365+akt[0]*53*1860*1/6*1/660, 0.427*365+akt[0]*53*1860*1/6*1/660, 0.212*365+akt[0]*53*1860*1/6*1/3040, 0.151*365+akt[0]*53*1860*1/6*1/860, 0.04*365+akt[0]*53*1860*1/6*1/1370]
     
     #Löse lineares Programm
-    res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=[(0,1),(0,1),(0,1),(0,1),(0,1),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1)], method='simplex')
+    res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=[(0,1),(0,1),(0,1),(0,1),(0,1),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(1,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1)], method='simplex')
        
-    return res.x
+    return res.x, max_prefdiff
        
 # 
 # Titellines -----------------------------------------------------------------------------------------------------------------------
 
-st.set_page_config(page_title='Fußabdruck der Zukunft', page_icon=None, layout='wide', initial_sidebar_state='collapsed')
+st.set_page_config(page_title='Fußabdruck der Zukunft', page_icon=None, layout='wide', initial_sidebar_state='expanded')
 #st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
 c1,c2 = st.beta_columns((7,2))
 c1.write("""
@@ -340,8 +340,9 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                     min_vals = [float(min_val_nahrung1),float(min_val_wohnen), float(min_val_mob1), float(min_val_mob2), float(min_val_konsum1)]
                     
                     
-                    solution = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung)
+                    solution,max_prefdiff = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung)
                     st.write(solution)
+                    st.write(max_prefdiff)
                 
                     st.markdown("***")
                     st.markdown("""
@@ -357,7 +358,7 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                         reduktion0 = round((1 - solution[0])*100,2)
                         c1,c2 = st.beta_columns((1,3))
                         image_fleisch= Image.open('Red_Fleisch.jpg')
-                        c1.image(image_fleisch, width=100, clamp=False, channels='RGB', output_format='auto')
+                        c1.image(image_fleisch, width=200, clamp=False, channels='RGB', output_format='auto')
                         c2.markdown("""
                             <b>Reduziere deinen Fleisch- und Fischkonsum um """+str(reduktion0)+""" %. </b><br>
                             Suche doch mal im Internet nach vegetarischen Rezepten. Dort gibt es eine rießige Auswahl, da ist
@@ -375,7 +376,10 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                             """,unsafe_allow_html=True)
                     if round(solution[2],4)<1:
                         reduktion2 = round((1 - solution[2])*100,2)
-                        st.markdown("""
+                        c1,c2 = st.beta_columns((1,3))
+                        image_fahrrad= Image.open('Red_Auto.jpg')
+                        c1.image(image_fahrrad, width=100, clamp=False, channels='RGB', output_format='auto')
+                        c2.markdown("""
                             <b>Reduziere deine Autokilometer um """+str(reduktion2)+""" %. </b><br>
                             Kurze Strecken kannst du mit dem Fahrrad fahren oder zu Fuß gehen. Das hält gleichzeitig noch
                             fit und gesund. Nimm doch für längere Strecken einfach mal den Bus oder die Bahn. Das kann
@@ -383,10 +387,10 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                             """,unsafe_allow_html=True)
                     if round(solution[3],4)<1:
                         reduktion3 = round((1 - solution[3])*100,2)
-                        c1,c2 = st.beta_columns((1,3))
+                        c1,c2 = st.beta_columns((3,1))
                         image_flieg= Image.open('Red_Fliegen.jpg')
-                        c1.image(image_flieg, width=100, clamp=False, channels='RGB', output_format='auto')
-                        c2.markdown("""
+                        c2.image(image_flieg, width=200, clamp=False, channels='RGB', output_format='auto')
+                        c1.markdown("""
                             <b>Reduziere deine Flugstunden um """+str(reduktion3)+""" %. </b><br>
                             Fliegen ist besonders klimaschädlich. Natürlich heißt das nicht, dass du garnicht mehr weiter
                             weg kannst. Aber überlege doch mal ob es vielleicht Alternativen gibt. Urlaubsziele lassen sich
@@ -394,7 +398,10 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                             """,unsafe_allow_html=True)
                     if round(solution[4],4)<1:
                         reduktion4 = round((1 - solution[4])*100,2)
-                        st.markdown("""
+                        c1,c2 = st.beta_columns((1,3))
+                        image_konsum= Image.open('Red_Konsum.jpg')
+                        c1.image(image_konsum, width=150, clamp=False, channels='RGB', output_format='auto')
+                        c2.markdown("""
                             <b>Reduziere deinen Konsum um """+str(reduktion4)+""" %.</b> <br>
                             Weniger Kleidungsstücke und dafür hochwertige sind deutlich besser für das Klima. Seien wir mal
                             ehrlich, viele Sachen die wir einmal kaufen ziehen wir am Ende viel zu selten an...
@@ -516,7 +523,14 @@ elif navigation == "Hintergrund: Budgetberechnung":
     st.markdown("***")
     st.write("""
              ## Künftige $CO_{2}$-Budgets
-             Damit künftige pro Kopf $CO_{2}$-Budgets berechnet werden können, soll hier das zu Grunde liegende Modell vorgestellt werden. Die Daten basieren auf dem Klimaschutzplan 2050, der vom Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU) veröffentlicht wurde [2]. Demnach sollen ausgehend vom Jahr 1990 bis 2030 die CO2-Emissionen mindestens um 55%, bis 2040 um 70% und bis 2050 um 80%-95% gesenkt werden. Die sich aus diesen Zielen ergebenden $CO_{2}$-Budgets sind in Abbildung 1 dargestellt.  
+             Damit künftige pro Kopf $CO_{2}$-Budgets berechnet werden können, soll hier das zu 
+             Grunde liegende Modell vorgestellt werden. Die Daten basieren auf dem Klimaschutzplan 
+             2050, der vom Bundesministerium für Umwelt, Naturschutz und nukleare Sicherheit (BMU)
+             veröffentlicht wurde [2].""") 
+    c1,c2,c3 = st.beta_columns((1,3,1))
+    c2.video(data='https://www.youtube.com/watch?v=OYwC3nkvCUo&ab_channel=Bundesumweltministerium', format='video/mp4', start_time=0)
+    st.write("""
+             Demnach sollen ausgehend vom Jahr 1990 bis 2030 die CO2-Emissionen mindestens um 55%, bis 2040 um 70% und bis 2050 um 80%-95% gesenkt werden. Die sich aus diesen Zielen ergebenden $CO_{2}$-Budgets sind in Abbildung 1 dargestellt.  
              """)
     c1,c2,c3 = st.beta_columns([1,3,1])
     image17= Image.open('Emissionsziel.PNG')
@@ -561,6 +575,20 @@ elif navigation == "Hintergrund: Datenvalidierung":
     image_tab10= Image.open('Tab10.PNG')
     c2.image(image_tab10, use_column_width=True,width=700, clamp=False, channels='RGB', output_format='auto')
     
+elif navigation == "Rechner: Gesellschaftlicher Einfluss":
+    st.sidebar.header('Eingabeparameter zur Berechnung gesellschaftlichen Einflusses')
+    
+    st.sidebar.markdown("***")
+
+    anzahl_einwohner = st.sidebar.text_input(label='Wie viele Einwohner:innen hat dein Ort oder deine Stadt?', value=0)
+    st.sidebar.markdown("***")
+    anzahl_motivierte = st.sidebar.slider('Wie viel Prozent aller Einwohner:innen kannst du zur Reduktion ihres CO2-Ausstoßes motivieren?',min_value=0,max_value=100,step=10, value=10)
+    reduktion = st.sidebar.slider('Um wie viel Prozent soll der Fußabdruck minimiert werden?',min_value=10,max_value=50,step=5, value=10)
+    
+    menschen = round(float(anzahl_einwohner) * (anzahl_motivierte/100))
+    einsparen = round(menschen * (reduktion/100) * 8013)
+    st.markdown("<font size = 5> Wenn du "+str(menschen)+" Menschen motivierst, ihren Fußabdruck mit dir gemeinsam um "+str(reduktion)+
+                " % zu reduzieren, dann könnt ihr gemeinsam ungefähr "+str(einsparen)+" Kilogramm CO2 einsparen.<font>",unsafe_allow_html=True)
     
 else:
     

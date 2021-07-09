@@ -229,8 +229,6 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
              deinen CO2-Fußabdruck heißt, wollen wir dir hier zeigen. Befolge dazu unsere 
              Schritt-für-Schritt-Anleitung. Und los geht’s!
              """)
-    st.markdown("""Befolge die folgenden Schritte und wir sagen dir, was du tun kannst, um deine $CO_{2}$-Emissionen
-                unter eine von dir gewählte Grenze zu verringern.""")
     c1,c2,c3 = st.beta_columns((1,5,1))
     image1= Image.open('Umweltschutz1.jpg')
     c2.image(image1, width=700, use_column_width=True, clamp=False, channels='RGB', output_format='auto')

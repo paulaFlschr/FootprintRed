@@ -146,7 +146,7 @@ c1.write("""
         # Fußabdruck der Zukunft
         ## Optimiere deinen ökologischen Fußabdruck
     """)
-navigation = c2.selectbox('', ["Startseite","Rechner: Fußabdruck-Optimierung", "Hintergrund: Fußabdruckberechnung", "Hintergrund: Budgetberechnung", "Hintergrund: Fußabdruck-Optimierung","Hintergrund: Datenvalidierung", "Rechner: Gesellschaftlicher Einfluss","Quellen & Impressum"])
+navigation = c2.selectbox('', ["Startseite","Rechner: Fußabdruckoptimierung", "Rechner: Gesellschaftlicher Einfluss","Hintergrund: Fußabdruckberechnung", "Hintergrund: Budgetberechnung", "Hintergrund: Fußabdruckoptimierung","Schülerseite","Hintergrund: Datenvalidierung","Quellen & Impressum"])
 st.markdown("***")
 hide_footer_style = """
     <style>
@@ -186,43 +186,115 @@ if navigation == 'Startseite':
                 bekannten Konzept eines CO2-Fußabdruck-Rechners. Allerdings soll darüber hinaus auf der Grundlage des persönlichen jährlichen CO2-Verbrauchs eine Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO2-Ziel einzuhalten. 
                 """, unsafe_allow_html=True)
 
-elif navigation == 'Hintergrund: Fußabdruck-Optimierung':
-    st.write("""Ziel unserer Optimierung ist es, dem Benutzer individuelle Handlungsempfehlungen 
-                über die Verringerung seines $CO_{2}$-Ausstoßes zu geben. Diese Empfehlungen 
-                sollen von den Präferenzen des Nutzers abhängig sein.
-                """)
+elif navigation == 'Hintergrund: Fußabdruckoptimierung':
     st.markdown("""
-                Unser Modell deckt fünf Bereiche ab, für welche Empfehlungen gegeben werden:<br>
+                Ziel unserer Optimierung ist es, dem Benutzer individuelle Handlungsempfehlungen 
+                über die Verringerung seines CO<sub>2</sub>-Ausstoßes zu geben. Diese Empfehlungen 
+                sollen von den Präferenzen des Nutzers abhängig sein. <br>Unser Modell deckt fünf Bereiche ab, für welche Empfehlungen gegeben werden:<br>
                 <ol><li>Fleischkonsum</li><li>Heizen</li><li>Autokilometer</li><li>Flugstunden</li><li>Kleiderkonsum</li></ol><br>
                 Dazu erhalten wir als Eingabedaten verschiedene Informationen, 
                 die in vier Bereiche unterteilt werden können:<br>
                 <ol><li>aktuelle Nutzdaten</li><li>Präferenzen</li><li>Minimalwerte</li><li>Optimierungsjahr</li></ol><br>
-                Aus diesen Daten erstellen wir ein Optimierungsmodell.<br>""",unsafe_allow_html=True)
-    st.write("""Schritt 1: Eingabedaten verarbeiten<br>
-                Aktuelle Nutzdaten: Für unser Modell benötigen wir die $CO_{2}$-Emissionen, 
+                Aus diesen Daten erstellen wir ein Optimierungsmodell.<br><br>
+                <font size = 5><b>Schritt 1: Eingabedaten verarbeiten</b></font><br><br>
+                Aktuelle Nutzdaten: Für unser Modell benötigen wir die CO<sub>2</sub>-Emissionen, 
                 die durch die einzelnen Handlungen erzeugt werden. Aus diesen berechnen wir 
-                die aktuellen $CO_{2}$-Emissionen der einzelnen Komponenten. Wie wir das berechnen
+                die aktuellen CO<sub>2</sub>-Emissionen der einzelnen Komponenten. Wie wir das berechnen
                 und welche Daten wir nutzen findest du in Abschnitt 'Hintergrund: 
-                Fußabdruckberechnung'.""")
-    st.write("""Als Ergebnis erhalten wir die Werte co2akt$_{i}$ mit $i \in$ I = 
-                \{Fleisch, Heizen, Auto, Flugzeug, Kleidung\}, sowie co2ess$_{j}$ mit 
-                $j \in$ J = \{Gemüse, Obst, Milchprodukte, Brot, Kartoffeln, Eier\} und 
-                co2strom.""")
-    st.write("""Optimierungsjahr: Anhand des Optimierungsjahres berechnen wir den maximal 
-                möglichen $CO_{2}$-Ausstoß des Nutzers, d.h. sein $CO_{2}$-Budget. Wie wir das 
+                Fußabdruckberechnung'.<br>
+                Als Ergebnis erhalten wir die Werte""",unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$co2akt_{i}$ mit $i \in I = \{Fleisch, Heizen, Auto, Flugzeug, Kleidung\}$")
+    st.write("sowie")
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$co2ess_{j}$ mit $j \in J = \{Gemüse, Obst, Milchprodukte, Brot, Kartoffeln, Eier\}$")
+    st.write("und") 
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$co2strom$.")
+    st.markdown("""Optimierungsjahr: Anhand des Optimierungsjahres berechnen wir den maximal 
+                möglichen CO<sub>2</sub>-Ausstoß des Nutzers, d.h. sein CO<sub>2</sub>-Budget. Wie wir das 
                 berechnen und welche Daten wir nutzen findest du in Abschnitt 'Hintergrund: 
-                    Budgetberechnung'.""")
-    st.write("""Als Ergebnis erhalten wir den Wert maxco2.
-                Schritt 2: Variablen einführen<br>
+                Budgetberechnung'.<br>
+                Als Ergebnis erhalten wir den Wert""",unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$maxco2$.")
+    st.markdown("""<font size = 5><b>Schritt 2: Variablen einführen</b></font><br><br>
                 Die Handlungsempfehlungen für den Nutzer werden zunächst als Prozentsätze 
                 berechnet. Diese geben an, auf wie viel Prozent der Nutzer seinen Verbrauch 
-                im Vergleich zum vorherigen Verbrauch reduzieren muss, um das $CO_{2}$-Budget 
-                einzuhalten. Dazu führen wir die folgenden Variablen ein:
-                var$$_{i}$$ mit $$i \in I$$ = \{Fleisch, Heizen, Auto, Flugzeug, Kleidung\}""")
+                im Vergleich zum vorherigen Verbrauch reduzieren muss, um das CO<sub>2</sub>-Budget 
+                einzuhalten. Dazu führen wir die folgenden Variablen ein:""",unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$var_{i}$ mit $i \in I = \{Fleisch, Heizen, Auto, Flugzeug, Kleidung\}$")
+    st.markdown("""<font size = 5><b>Schritt 3: Zielfunktion</b></font><br><br>
+                Die Präferenzen des Nutzers sollen maximiert werden, damit die Reduktion 
+                der Emissionen möglichst komfortabel geschieht. Vom Nutzer erhalten wir direkt
+                seine Präferenzwerte. Diese liegen zwischen 1 und 10, je höher der Wert desto
+                höher auch die Präferenz. Da $var_{i}$ die Beibehaltung der jeweiligen Kategorien 
+                angibt, erhalten wir durch Multiplikation mit den den passenden Präferenzwerten 
+                den Gesamtkomfort. Um höhere Präferenzwerte deutlicher von niedrigen abzugrenzen
+                quadrieren wir die Präferenzwerte. Wir erhalten:""",unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("maximize $\displaystyle\sum\limits_{i \in I} pref_{i}^{2} \cdot var_{i}$")
+    st.markdown("""<font size = 5><b>Schritt 4: Nebenbedingungen - Budget einhalten</b></font><br><br>
+               Die $CO_{2}$-Emissionen des Nutzers sollen so weit herabgesetzt werden, dass er sein
+               $CO_{2}$-Budget $maxco2$ einhält (siehe Schritt1). Der $CO_{2}$-Ausstoß setzt sich aus
+               den Werten für die fünf Optimierungskategorien, sowie Essen und Strom zusammen 
+               (siehe Schritt 1). Durch Multiplikation der $var_{i}$ mit den passenden co2akt$_{i}$ 
+               erhalten wir die neuen Emissionswerte.<br>
+               Nun gilt es zu beachten, dass eine Reduktion des Fleischkonsums zwingend zu einem 
+               höheren Konsum anderer Lebensmittel führt, um den Kalorienhaushalt zu decken. Daher 
+               führen wir Variablen""",unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$var_{j}$ für $j \in J$ mit $var_{j}  \geq 0$  $j \in J$")
+    st.markdown("""ein, die diesen Austauschprozess simulieren.<br>
+                Um eine möglichst realistische Einschätzung zu geben, wird der tägliche 
+               Kalorienbedarf ausgehend von der angegebenen Verzehrmenge Fleisch und den 
+               durchschnittlichen Verzehrmengen der übrigen Lebensmittelgruppen berechnet. 
+               Zu der vorgeschlagenen Reduzierung der Verzehrmenge Fleisch wird die entsprechende
+               Kalorienangabe ermittelt und auf die anderen Lebensmittelgruppen verteilt. Grundlage 
+               für diese Berechnungen bilden die folgenden Zusammenhänge. (Bild einfügen) 
+               (noch j in die Bilder einfügen für die Lebensmittelkategorien). <br>
+               Wir erhalten den Zusammenhang:""",unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$menge_{j} \cdot 365 + (1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6 \cdot 1/kalorien_{j} = var_{j}$  $j \in J$")
+    st.markdown("""Für den Gesamtausstoß addieren wir zu den bereits genannten Summen noch die 
+                $CO_{2}$-Emissionen für Strom. Wir erhalten damit die Budget-Bedingung:""",unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$\displaystyle\sum\limits_{i \in I} var_{i} \cdot co2akt_{i} + \displaystyle\sum\limits_{j \in J} var_{j} \cdot co2ess_{j} + co2strom \leq maxco2$")
+    st.markdown("""<font size = 5><b>Schritt 5: Nebenbedingung - Minimalwerte einhalten</b></font><br><br>
+                Unser Rechner bietet die Möglichkeit, Minimalwerte für einzelne Kategorien 
+                zu setzen. Um diese einzuhalten muss garantiert sein, dass der von unserer 
+                Handlungsempfehlung empfohlene Wert nicht unter dieser Minimalgrenze liegt.
+                Da der neue Wert sich aus der Multiplikation des alten Werts $akt_{i}$ mit 
+                dem optimierten Prozentsatz $var_{i}$ zusammensetzt, muss gelten:""",unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$var_{i} \cdot akt_{i} \geq minval_{i}$  $i \in I$")
+    st.markdown("""<font size = 5><b>Schritt 6: Nebenbedingung: ausgeglichene Optimierung</b></font><br><br>
+                Das aktuelle Optimierungsmodell würde die Variablen $var_{i}$ nacheinander 
+                auf 0 setzen (bzw. auf den Minimalwert). Bei unterschiedlichen Präferenzwerten
+                würde dies in aufsteigender Reihenfolge bezüglich der Präferenzwerte geschehen
+                , bei gleichen Präferenzwerten in Abhängigkeit des höchsten Wertes 
+                co2akt$_{i}$. Das ist für das alltägliche Leben allerdings wenig plausibel. 
+                Daher streben wir eine möglichst ausgeglichene Optimierung im Sinne der 
+                gesetzten Präferenzwerte an. Das bedeutet, dass die Optimierung je 
+                ausgeglichener sein soll, desto ausgeglichener die Präferenzwerte sind.
+                Dazu betrachten wir die Summe über die Beträge aller Optimierungsvariablen
+                $var_{i}$, d.h. die Summe über die Unterschiede. Als Schranke für diese 
+                Summe wählen wir den quadrierten maximalen Unterschied zweier Präferenzwerte.
+                Diese hat sich in Modellierungsversuchen als besonders effektiv erwiesen. 
+                Wir erhalten damit die Nebenbedingung:""",unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$\displaystyle\sum\limits_{i_{1}=1}^{5} \displaystyle\sum\limits_{i_{2}=i_{1}}^{5} |var_{i_{1}} - var_{i_{2}}| \leq \max\limits_{i\prime, i\prime\prime \in I} |pref_{i\prime} - pref_{i\prime\prime}|^{2}$ $i_{1}, i_{2} \in I$")
+    st.markdown("""<font size = 5><b>Zusammenfassend ergibt sich damit das folgende 
+                Optimierungsmodell:</b></font><br>""",unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    imageopt= Image.open('Optimierungsmodell.PNG')
+    c2.image(imageopt, width=700, use_column_width=True, clamp=False, channels='RGB', output_format='auto')
+    
            
                 
       
-elif navigation == "Rechner: Fußabdruck-Optimierung":
+elif navigation == "Rechner: Fußabdruckoptimierung":
     st.write("""
              Hier kannst du deinen aktuellen CO2-Fußabdruck berechnen. Um dem Klimawandel 
              entgegenzuwirken, muss aber in der Zukunft der CO2-Ausstoß sinken. Was das für 
@@ -245,16 +317,16 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
    
     col1, col2, col3, col4 = st.beta_columns(4)
     col1.markdown("### Kategorie: Ernährung",unsafe_allow_html=True)
-    nahrung1 = col1.text_input(label='Wie viel Kilogramm Fleisch und Fisch konsumierst du wöchentlich?', value=1.1)
+    nahrung1 = col1.text_input(label='Wie viel Kilogramm Fleisch und Fisch konsumierst du wöchentlich?', value=1.37)
     nahrung2 = col1.radio('Wie wichtig ist dir, dass die Lebensmittel regional sind?',['sehr wichtig','manchmal wichtig','garnicht wichtig'], index=1)
     col2.markdown("### Kategorie: Wohnen",unsafe_allow_html=True)
     wohnen1 = col2.slider(label='Auf wie viel Grad heizt du deine Wohnung normalerweise?', min_value=18,max_value=24,step=1, value=21)
     wohnen2 = col2.text_input(label='Wie viel Quadratmeter Wohnfläche hast du zur Verfügung (pro Person)?', value=47)
     col3.markdown("### Kategorie: Mobilität",unsafe_allow_html=True)
-    mob1 = col3.text_input(label='Wie viel Kilometer fährst du pro Jahr mit dem Auto (pro Person)?', value=11888)
+    mob1 = col3.text_input(label='Wie viel Kilometer fährst du pro Jahr mit dem Auto (pro Person)?', value=11733)
     mob2 = col3.text_input(label='Wie viele Stunden bist du in den letzten vier Jahren geflogen?', value=12)
     col4.markdown("### Kategorie: Konsum (Kleidung)",unsafe_allow_html=True)
-    konsum1 = col4.text_input(label='Wie viele Kleidungsstücke kaufst du im Jahr?', value=60)
+    konsum1 = col4.text_input(label='Wie viele Kleidungsstücke kaufst du im Jahr?', value=56.2)
     col4.markdown('<br><br><br><br><br>',unsafe_allow_html=True)
     
      # Berechne den aktuellen fußabdruck
@@ -275,7 +347,7 @@ elif navigation == "Rechner: Fußabdruck-Optimierung":
                 """,unsafe_allow_html=True)
             
         df = pd.DataFrame(
-            [["Nahrung", 1704,co2_akt_nach_kat[0]], ["Wohnen", 2730,co2_akt_nach_kat[1]], ["Mobilität", 3051,co2_akt_nach_kat[2]],["Konsum (Kleidung)",507,co2_akt_nach_kat[3]]],
+            [["Nahrung", 1788,co2_akt_nach_kat[0]], ["Wohnen", 2730,co2_akt_nach_kat[1]], ["Mobilität", 3020,co2_akt_nach_kat[2]],["Kleiderkonsum",474,co2_akt_nach_kat[3]]],
             columns=["Kategorie","Durschnitt CO2 Deutschland", "Dein CO2"])
         fig = px.bar(df, x="Kategorie", y=["Durschnitt CO2 Deutschland", "Dein CO2"], barmode='group', height=400)
         col3.plotly_chart(fig)
@@ -446,9 +518,7 @@ elif navigation == 'Hintergrund: Fußabdruckberechnung':
     c1,c2,c3 = st.beta_columns([1,3,1])
     image5= Image.open('Formel_Essen.PNG')
     c2.image(image5, width=700, clamp=False, channels='RGB', output_format='auto')
-    st.write("""
-             Es soll nicht nur der persönliche $CO_{2}$-Verbrauch berechnet werden, sondern darüber hinaus soll dem Benutzer vorgeschlagen werden, wie er sein Verhalten verändern kann, um zu einem bestimmten Zeitpunkt unter dem pro Kopf $CO_{2}$-Budget zu bleiben. In Bezug auf die Nahrung soll dabei, falls nötig und erwünscht die Verzehrmenge Fleisch reduziert werden, da ihr gemäß Tabelle 3 ein hoher $CO_{2}$-Wert zugeordnet wird. Dabei soll eine Reduzierung der Fleischmenge nicht dazu führen, dass der Benutzer insgesamt weniger isst. Aus diesem Grund wird die reduzierte Menge auf die andren Lebensmittelgruppe verteilt. Um eine möglichst realistische Einschätzung hierzu zu geben, wird der tägliche Kalorien bedarf ausgehend von der angegebenen Verzehrmenge Fleisch und den durchschnittlichen Verzehrmengen der übrigen Lebensmittelgruppen berechnet. Zu der vorgeschlagenen Reduzierung der Verzehrmenge Fleisch wird die entsprechende Kalorienangabe ermittelt und auf die anderen Lebensmittelgruppen verteilt. Grundlage für diese Berechnungen bilden die folgenden Zusammenhänge. 
-             """)
+    
     c1,c2,c3 = st.beta_columns([1,3,1])
     image6= Image.open('Formel_Fleischersatz.PNG')
     c2.image(image6, width=700, clamp=False, channels='RGB', output_format='auto')
@@ -618,6 +688,115 @@ elif navigation == "Rechner: Gesellschaftlicher Einfluss":
         
         fig = px.bar(df, x='val', y="kg CO2", orientation='h')
         c2.plotly_chart(fig)
+
+elif navigation=='Schülerseite':
+    c1, c2 = st.beta_columns([1, 1])
+    c1.write("""
+            # Schülerseite - Fußabdruck der Zukunft
+         """)
+    c1.write("Willkommen auf der Schülerseite von „Fußabdruck der Zukunft“. Hier findest du eine Anleitung, die dich durch unsere Seite führt. Los geht’s!")
+    image1 = Image.open('Schüler.jpg')
+    c2.image(image1, width=700, clamp=False, channels='RGB', output_format='auto')
+    st.markdown("***")
+    
+    st.write("""
+            ## Aufgabe 1
+            Schau dir zum Einstieg in das Thema das Video „CO2 und der Treibhauseffekt - einfach erklärt“ an. 
+            """)
+    
+    c1, c2, c3 = st.beta_columns([1, 2, 1])
+    c2.video(data='https://www.youtube.com/watch?v=CR3q9vnSlFQ', format='video/mp4', start_time=0)
+    
+    checkbox1 = st.checkbox(label="Weiter zu Aufgabe 2")
+    if checkbox1:
+        st.markdown("***")
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.write("""
+                ## Aufgabe 2
+                Besuche jetzt die Seite „Fußabdruck der Zukunft“ über den folgenden Link https://share.streamlit.io/paulaflschr/footprintred/main/footprintapp.py.
+                Lies dir alle Informationen auf der Startseite durch und schau dir das Video „Klimaschutz im Alltag – Welchen Einfluss haben wir?“ an. 
+                """)
+        st.markdown("<br>", unsafe_allow_html=True)
+    
+    
+        checkbox2 = st.checkbox(label="Weiter zu Aufgabe 3")
+        if checkbox2:
+            st.markdown("***")
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("""
+                        ## Aufgabe 3
+                        Wechsele jetzt zum "Rechner: Fußabdruck-Optimierung". Führe den Schritt 1 durch und schau dir dein Ergebnis an. Stell dir selbst die Fragen: <br>
+                        <i>„Welcher Bereich in meinem Leben hat den größten Verbrauchswert?“ <br>
+                        „Habe ich erwartet, dass die Verteilung so aussieht? Wenn ja, wieso?“ <br>
+                        „Sind meine Werte größer oder kleiner als die durchschnittlichen Werte?“ <br>
+                        „Ist das gut oder eher schlecht?“</i> """, unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
+    
+    
+            checkbox3 = st.checkbox(label="Weiter zu Aufgabe 4")
+            if checkbox3:
+                st.markdown("***")
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.write("""
+                        ## Aufgabe 4
+                        Führe jetzt die übrigen Schritte 2 bis 4 durch und schau dir das Ergebnis deines zukünftigen Fußabdrucks an. Verändere gerne deine Eingabe aus den Schritten 3 und 4. Welche Auswirkungen hat das auf dein Ergebnis?
+                        """)
+                st.markdown("<br>", unsafe_allow_html=True)
+    
+    
+                checkbox4 = st.checkbox(label="Weiter zu Aufgabe 5")
+                if checkbox4:
+                    st.markdown("***")
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    st.write("""
+                            ## Aufgabe 5
+                            Deutschland hat seine Klimaziele im Klimaschutzplan 2050 festgehalten. Was es damit auf sich hat erfährst du im Video "der Klimaschutzplan".
+                            """)
+                    c1, c2, c3 = st.beta_columns([1, 2, 1])
+                    c2.video(data='https://www.youtube.com/watch?v=OYwC3nkvCUo', format='video/mp4', start_time=0)
+                    st.write("""
+                            Damit das Klimaschutzziel erreicht werden kann, müssen alle mitmachen. Um dir ein Gefühl dafür zu geben, welchen Einfluss das Handeln von dir und den Menschen in deinem Umfeld hat, haben wir den "Rechner:Gesellschaftlicher Einfluss" entwickelt. 
+                            Wechsele jetzt zum "Rechner: Gesellschaftlicher Einfluss". Führe den Rechner aus und verändere dabei deine Eingabewerte. Was fällt dir auf?
+                            """)
+                    st.markdown("<br>", unsafe_allow_html=True)
+    
+    
+                    checkbox5 = st.checkbox(label="Weiter zu Aufgabe 6")
+                    if checkbox5:
+                        st.markdown("***")
+                        st.markdown("<br>", unsafe_allow_html=True)
+                        st.write("""
+                                ## Aufgabe 6
+                                Wir wollen dir jetzt erklären, wie wir den "Rechner: Fußabdruck-Optimierung" entwickelt haben und welche Überlegungen dahinter stecken.
+                                Wechsele dazu auf die Seite "Hintergrund: Fußabdruckberechnung". Hier wird dir Schritt für Schritt erklärt, wie der "Rechner: Fußabdruckoptimierung" deinen persönlichen CO<sub>2</sub>-Fußabdruck berechnet.
+                                Du wirst durch die einzelnen Kategorien geführt und findest dort auch Verweise auf die Quellen, aus denen unsere Daten stammen.<br>
+                                <br> Lies dir alles in Ruhe durch. Versuche dann selbst deinen CO<sub>2</sub>-Verbrauch zu berechnen. Verwende dazu die Formeln der Seite und die Daten aus den Tabellen.
+                                Zur Überprüfung stehen dir deine Werte aus dem "Rechner:Fußabdruck-Optimierung" zur Verfügung.""", unsafe_allow_html=True)
+                        st.markdown("<br>", unsafe_allow_html=True)
+    
+    
+                        checkbox6 = st. checkbox(label="Weiter zu Aufgabe 7")
+                        if checkbox6:
+                            st.markdown("***")
+                            st.markdown("<br>", unsafe_allow_html=True)
+                            st.write("""
+                                    ## Aufgabe 7
+                                    Nachdem du jetzt weißt, wie der CO<sub>2</sub>-Fußabdruck berechnet wird, schauen wir uns als nächstes das CO<sub>2</sub>-Budget an. Wechsele dazu auf die Seite "Hintergrund: Budgetberechnung".
+                                    Lies dir alles in Ruhe durch und schau dir gerne das Video zum Klimaschutzplan noch einmal an, falls es dir hilft.
+                                    Versuche anschließend selbst dein künftiges CO<sub>2</sub>-Budget zu berechnen, indem du dir ein beliebiges Jahr bis 2050 auswählst. Wie wäre es zum Beispiel mit 2033?""", unsafe_allow_html=True)
+                            st.markdown("<br>", unsafe_allow_html=True)
+    
+    
+                            checkbox7 = st.checkbox(label="Weiter zu Aufgabe 8")
+                            if checkbox7:
+                                st.markdown("***")
+                                st.markdown("<br>", unsafe_allow_html=True)
+                                st.write("""
+                                        ## Aufgabe 8
+                                        Unser "Rechner:Fußabdruck-Optimierung" reduziert deinen ursprünglichen Fußabdruck so, dass du dein künftiges CO<sun>2</sub>-Budget einhälst. Wie diese Reduzierung funktioniert, wollen wir dir jetzt erklären.
+                                        Wechsele dazu zur Seite "Hintergrund: Fußabdruck-Optimierung". Lies dir alles Ruhe durch.""", unsafe_allow_html=True)
+                                st.markdown("<br>", unsafe_allow_html=True)
+
         
     
 else:

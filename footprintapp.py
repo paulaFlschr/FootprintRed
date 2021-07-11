@@ -316,7 +316,7 @@ elif navigation == "Rechner: Fußabdruckoptimierung":
                         
                         
                         solution,max_prefdiff,maxco2 = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung)
-                        st.write(solution)
+                        #st.write(solution)
                         #st.write(max_prefdiff)
                     
                         st.markdown("***")
@@ -728,17 +728,25 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
                durchschnittlichen Verzehrmengen der übrigen Lebensmittelgruppen berechnet.
                Dies geschieht auf Basis der Daten die in Tabelle 12 zu finden sind.
                    """,unsafe_allow_html=True)
-    c1,c2 = st.beta_columns(2)
-    imagekal1= Image.open('Formel_Kalorien.PNG')
-    c1.markdown("<br><br><br>",unsafe_allow_html=True)
-    c1.image(imagekal1, use_column_width=True,width=700, clamp=False, channels='RGB', output_format='auto')
+    c1,c2,c3 = st.beta_columns((1,2,1))
     imagekal2= Image.open('Tab12.PNG')
     c2.image(imagekal2, use_column_width=True,width=700, clamp=False, channels='RGB', output_format='auto')
     st.markdown(""" Zu der vorgeschlagenen Reduzierung der Verzehrmenge Fleisch wird die entsprechende
-               Kalorienangabe ermittelt und gleichmäßig auf die anderen Lebensmittelgruppen verteilt. Grundlage 
-               für diese Berechnungen bilden die folgenden Zusammenhänge. (Bild einfügen) 
-               (noch j in die Bilder einfügen für die Lebensmittelkategorien). <br>
-               Wir erhalten den Zusammenhang:""",unsafe_allow_html=True)
+               Kalorienangabe ermittelt"""
+               ,unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$(1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860$")
+    st.markdown(""" und gleichmäßig auf die anderen Lebensmittelgruppen verteilt:"""
+               ,unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$(1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6$")
+    st.write("""Abschließend wird der zusätzliche Kalorienwert in Kilogramm umgerechnet. Dies geschieht
+             durch Division durch die Kilokalorien pro Kilogramm des entsprechenden Lebensmittels:
+                """)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$(1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6 \cdot 1/kalorien_{j}$")
+    st.write("""Durch die Addition dieser zusätzlichen Verzehrmenge mit der bereits zuvor 
+                verzehrten Menge erhalten wir die neue Verzehrmenge $var_{j}$:""")
     c1,c2,c3 = st.beta_columns((1,4,1))
     c2.write("$menge_{j} + (1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6 \cdot 1/kalorien_{j} = var_{j}$  $j \in J$")
     st.markdown("""Für den Gesamtausstoß addieren wir zu den bereits genannten Summen noch die 

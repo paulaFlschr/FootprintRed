@@ -181,8 +181,8 @@ if navigation == 'Startseite':
                 Politik und große Unternehmen vor eine große Herausforderung, sondern wird auch 
                 großen Einfluss auf die Bevölkerung haben. Jeder Einzelne wird sich auf 
                 Einschränkungen einlassen müssen und einen Beitrag zum Klimaschutz 
-                leisten müssen. <center><b> Doch wie könnten diese Einschränkungen für die Bevölkerung 
-                von Deutschland aussehen? </b></center> Unsere Modellierung basiert auf dem 
+                leisten müssen. <br> <br> <center><b> Doch wie könnten diese Einschränkungen für die Bevölkerung 
+                von Deutschland aussehen? </b></center><br> Unsere Modellierung basiert auf dem 
                 bekannten Konzept eines CO<sub>2</sub>-Fußabdruck-Rechners. Allerdings soll darüber 
                 hinaus auf der Grundlage des persönlichen jährlichen CO<sub>2</sub>-Verbrauchs eine
                 Empfehlung gegeben werden, wie das Verhalten verändert werden könnte, um das CO<sub>2</sub>-Ziel 
@@ -410,10 +410,10 @@ elif navigation == "Rechner: Gesellschaftlicher Einfluss":
     anzahl_motivierte = st.sidebar.slider('Wie viel Prozent aller Einwohner:innen kannst du zur Reduktion ihres CO2-Ausstoßes motivieren?',min_value=0,max_value=100,step=10, value=10)
     st.sidebar.markdown("***")
     
-    red_fleisch = st.sidebar.text_input('Wie viel kg Fleisch werdet ihr pro Woche weniger essen?', value=0)
-    red_auto = st.sidebar.text_input('Wie viel km Auto werdet ihr pro Jahr weniger fahren?',value=0)
-    red_flug = st.sidebar.text_input('Wie viel Stunden werdet ihr in vier Jahren weniger fliegen?',value=0)
-    red_konsum = st.sidebar.text_input('Wie viel Kleidungsstücke werdet ihr pro Jahr weniger kaufen?',value=0)
+    red_fleisch = st.sidebar.text_input('Wie viel kg Fleisch werdet ihr pro Woche pro Person weniger essen?', value=0)
+    red_auto = st.sidebar.text_input('Wie viel km Auto werdet ihr pro Jahr pro Person weniger fahren?',value=0)
+    red_flug = st.sidebar.text_input('Wie viel Stunden werdet ihr in vier Jahren pro Person weniger fliegen?',value=0)
+    red_konsum = st.sidebar.text_input('Wie viel Kleidungsstücke werdet ihr pro Jahr pro Person weniger kaufen?',value=0)
     
     menschen = round(float(anzahl_einwohner) * (anzahl_motivierte/100))
     einsparen = round((float(red_fleisch) * 7.21*53) + (float(red_auto)*0.2045) + ((float(red_flug)*1049.8*0.197)/4) + (float(red_konsum)*8.45))*menschen
@@ -697,8 +697,8 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
                 einzuhalten. Dazu führen wir die folgenden Variablen ein:""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,4,1))
     c2.write("$var_{i}$ mit $i \in I = \{Fleisch, Heizen, Auto, Flugzeug, Kleidung\}$")
-    c1,c2,c3 = st.beta_columns((3,4,3))
     c2.write("$0 \leq var_{i} \leq 1$")
+    c2.write("$var_{i}$ $\widehat{=}$ Anteil zu dem Aspekt beibehalten wird")
     st.markdown("""<font size = 5><b>Schritt 3: Zielfunktion</b></font><br><br>
                 Die Präferenzen des Nutzers sollen maximiert werden, damit die Reduktion 
                 der Emissionen möglichst komfortabel geschieht. Vom Nutzer erhalten wir direkt
@@ -712,7 +712,8 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
     st.markdown("""<font size = 5><b>Schritt 4: Nebenbedingungen - Budget einhalten</b></font><br><br>
                Die CO<sub>2</sub>-Emissionen des Nutzers sollen so weit herabgesetzt werden, dass er sein
                CO<sub>2</sub>-Budget $maxco2$ einhält (siehe Schritt1). Der CO<sub>2</sub>-Ausstoß setzt sich aus
-               den Werten für die fünf Optimierungskategorien, sowie Essen und Strom zusammen 
+               den Werten für die fünf Optimierungskategorien, sowie Essen, Strom und dem 
+               Basisheizwert zusammen 
                (siehe Schritt 1). Durch Multiplikation der $var_{i}$ mit den passenden co2akt$_{i}$ 
                erhalten wir die neuen Emissionswerte.<br>
                Nun gilt es zu beachten, dass eine Reduktion des Fleischkonsums zwingend zu einem 
@@ -720,22 +721,30 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
                führen wir Variablen""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,4,1))
     c2.write("$var_{j}$ für $j \in J$ mit $var_{j}  \geq 0$  $j \in J$")
-    st.write("""ein, die diesen Austauschprozess simulieren. Dabei gibt $var_{j}$ die jährlich verzehrte
-             Menge einer Lebensmittelgruppe $j$ in Kilogramm an.""")
+    c2.write("$var_{j} \widehat{=}$ jährliche Verzehrmenge der Lebensmittelgruppe $j$ in kg")
+    st.write("""ein, die diesen Austauschprozess simulieren.""")
     st.markdown(""" Um eine möglichst realistische Einschätzung zu geben, wird der tägliche 
                Kalorienbedarf ausgehend von der angegebenen Verzehrmenge Fleisch und den 
-               durchschnittlichen Verzehrmengen der übrigen Lebensmittelgruppen berechnet. 
-               Zu der vorgeschlagenen Reduzierung der Verzehrmenge Fleisch wird die entsprechende
-               Kalorienangabe ermittelt und auf die anderen Lebensmittelgruppen verteilt. Grundlage 
+               durchschnittlichen Verzehrmengen der übrigen Lebensmittelgruppen berechnet.
+               Dies geschieht auf Basis der Daten die in Tabelle 12 zu finden sind.
+                   """,unsafe_allow_html=True)
+    c1,c2 = st.beta_columns(2)
+    imagekal1= Image.open('Formel_Kalorien.PNG')
+    c1.markdown("<br><br><br>",unsafe_allow_html=True)
+    c1.image(imagekal1, use_column_width=True,width=700, clamp=False, channels='RGB', output_format='auto')
+    imagekal2= Image.open('Tab12.PNG')
+    c2.image(imagekal2, use_column_width=True,width=700, clamp=False, channels='RGB', output_format='auto')
+    st.markdown(""" Zu der vorgeschlagenen Reduzierung der Verzehrmenge Fleisch wird die entsprechende
+               Kalorienangabe ermittelt und gleichmäßig auf die anderen Lebensmittelgruppen verteilt. Grundlage 
                für diese Berechnungen bilden die folgenden Zusammenhänge. (Bild einfügen) 
                (noch j in die Bilder einfügen für die Lebensmittelkategorien). <br>
                Wir erhalten den Zusammenhang:""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,4,1))
     c2.write("$menge_{j} + (1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6 \cdot 1/kalorien_{j} = var_{j}$  $j \in J$")
     st.markdown("""Für den Gesamtausstoß addieren wir zu den bereits genannten Summen noch die 
-                CO<sub>2</sub>-Emissionen für Strom. Wir erhalten damit die Budget-Bedingung:""",unsafe_allow_html=True)
+                CO<sub>2</sub>-Emissionen für Strom und den Heizbasiswert. Wir erhalten damit die Budget-Bedingung:""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,4,1))
-    c2.write("$\displaystyle\sum\limits_{i \in I} var_{i} \cdot co2akt_{i} + \displaystyle\sum\limits_{j \in J} var_{j} \cdot co2ess_{j} + co2strom \leq maxco2$")
+    c2.write("$\displaystyle\sum\limits_{i \in I} var_{i} \cdot co2akt_{i} + \displaystyle\sum\limits_{j \in J} var_{j} \cdot co2ess_{j} + co2strom + co2heizen \leq maxco2$")
     st.markdown("""<font size = 5><b>Schritt 5: Nebenbedingung - Minimalwerte einhalten</b></font><br><br>
                 Unser Rechner bietet die Möglichkeit, Minimalwerte für einzelne Kategorien 
                 zu setzen. Um diese einzuhalten muss garantiert sein, dass der von unserer 
@@ -743,12 +752,18 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
                 Da der neue Wert sich aus der Multiplikation des alten Werts $akt_{i}$ mit 
                 dem optimierten Prozentsatz $var_{i}$ zusammensetzt, muss gelten:""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,4,1))
-    c2.write("$var_{i} \cdot akt_{i} \geq minval_{i}$  $i \in I$")
+    c2.write("$var_{i} \cdot akt_{i} \geq minval_{i}$  $i \in I \setminus \{Heizen\}$")
+    st.markdown(""" Dabei ist zu beachten, dass die Variable $var_{Heizen}$ nur die Werte über
+                18 Grad Celsius beeinflussen kann. Daher ensteht eine leichte Abwandlung dieser
+                Nebenbedingung für den Bereich 'Heizen':
+                """,unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$18 + var_{Heizen} \cdot (akt_{Heizen}-18) \geq minval_{Heizen}$")
     st.markdown("""<font size = 5><b>Schritt 6: Nebenbedingung: ausgeglichene Optimierung</b></font><br><br>
                 Das aktuelle Optimierungsmodell würde die Variablen $var_{i}$ nacheinander 
                 auf 0 setzen (bzw. auf den Minimalwert). Bei unterschiedlichen Präferenzwerten
-                würde dies in aufsteigender Reihenfolge bezüglich der Präferenzwerte geschehen
-                , bei gleichen Präferenzwerten in Abhängigkeit des höchsten Wertes 
+                würde dies in aufsteigender Reihenfolge bezüglich der Präferenzwerte geschehen,
+                bei gleichen Präferenzwerten in Abhängigkeit des höchsten Wertes 
                 co2akt$_{i}$. Das ist für das alltägliche Leben allerdings wenig plausibel. 
                 Daher streben wir eine möglichst ausgeglichene Optimierung im Sinne der 
                 gesetzten Präferenzwerte an. Das bedeutet, dass die Optimierung je 
@@ -760,11 +775,23 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
                 Wir erhalten damit die Nebenbedingung:""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,4,1))
     c2.write("$\displaystyle\sum\limits_{i_{1}=1}^{5} \displaystyle\sum\limits_{i_{2}=i_{1}}^{5} |var_{i_{1}} - var_{i_{2}}| \leq \max\limits_{i\prime, i\prime\prime \in I} |pref_{i\prime} - pref_{i\prime\prime}|^{2}$ $i_{1}, i_{2} \in I$")
+    st.markdown("""Anmerkung: An dieser Stelle wird erstmals klar, warum die Unterscheidung
+                in den Heizbasiswert und die weiteren Heizemissionen getroffen wurde. 
+                Aufgrund unserer Datenbasis [4] können nur Heizwerte über 18 Grad Celsius 
+                beachtet werden. Eine Möglichkeit wäre es nun, lediglich über den Minimalwert
+                (siehe Schritt 5) zu arbeiten und diesen auf 18 zu setzen. Das würde allerdings
+                dazu führen, dass der Prozentsatz sich nur in einem sehr kleinen Bereich
+                bewegen kann, was einer ausgeglichenen Optimierung wiederspricht.""",unsafe_allow_html=True)
+    
     st.markdown("""<font size = 5><b>Zusammenfassend ergibt sich damit das folgende 
                 Optimierungsmodell:</b></font><br>""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,4,1))
     imageopt= Image.open('Optimierungsmodell.PNG')
     c2.image(imageopt, width=700, use_column_width=True, clamp=False, channels='RGB', output_format='auto')
+    st.markdown("***")
+    st.markdown("""<font size = 2>
+                <sup>3</sup> Die Kategorie beinhaltet hier und im Folgenden auch die Lebensmittelgruppe Fisch.
+                </font>""",unsafe_allow_html=True)
     
 #======================================================================================================          
                 

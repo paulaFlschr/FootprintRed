@@ -11,6 +11,7 @@ from PIL import Image
 import numpy as np
 import plotly.express as px
 import scipy.optimize as sc
+import re
 
 def akt_abdruck(akt):
     
@@ -227,6 +228,11 @@ elif navigation == "Rechner: Fußabdruckoptimierung":
     col4.markdown("### Kategorie: Konsum (Kleidung)",unsafe_allow_html=True)
     konsum1 = col4.text_input(label='Wie viele Kleidungsstücke kaufst du im Jahr?', value=56.2)
     col4.markdown('<br><br><br><br><br>',unsafe_allow_html=True)
+    nahrung1 = re.sub(r'\,', r'.',nahrung1)
+    wohnen2 = re.sub(r'\,', r'.',wohnen2)
+    mob1 = re.sub(r'\,', r'.',mob1)
+    mob2 = re.sub(r'\,', r'.',mob2)
+    konsum1 = re.sub(r'\,', r'.',konsum1)
     
      # Berechne den aktuellen fußabdruck
     akt = [float(nahrung1),nahrung2,wohnen1,float(wohnen2),float(mob1),float(mob2),float(konsum1)]
@@ -271,6 +277,12 @@ elif navigation == "Rechner: Fußabdruckoptimierung":
             min_val_mob1 = col3.text_input(label='Minimale Autokilometer pro Jahr', value=0)
             min_val_mob2 = col3.text_input(label='Minimale Flugstunden in 4 Jahren', value=0)
             min_val_konsum1 = col4.text_input(label='Minimale Anzahl an neuen Kleidungsstücken im Jahr', value=0)
+            
+            min_val_nahrung1 = re.sub(r'\,', r'.',min_val_nahrung1)
+            min_val_wohnen = re.sub(r'\,', r'.',min_val_wohnen)
+            min_val_mob1 = re.sub(r'\,', r'.',min_val_mob1)
+            min_val_mob2 = re.sub(r'\,', r'.',min_val_mob2)
+            min_val_konsum1 = re.sub(r'\,', r'.',min_val_konsum1)
             
             checkbox2 = st.checkbox(label="Schritt 2 abschließen: Minimalwerte setzen")
             if checkbox2:
@@ -414,6 +426,11 @@ elif navigation == "Rechner: Gesellschaftlicher Einfluss":
     red_auto = st.sidebar.text_input('Wie viel km Auto werdet ihr pro Jahr pro Person weniger fahren?',value=0)
     red_flug = st.sidebar.text_input('Wie viel Stunden werdet ihr in vier Jahren pro Person weniger fliegen?',value=0)
     red_konsum = st.sidebar.text_input('Wie viel Kleidungsstücke werdet ihr pro Jahr pro Person weniger kaufen?',value=0)
+    
+    red_fleisch = re.sub(r'\,', r'.',red_fleisch)
+    red_auto = re.sub(r'\,', r'.',red_auto)
+    red_flug = re.sub(r'\,', r'.',red_flug)
+    red_konsum = re.sub(r'\,', r'.',red_konsum)
     
     menschen = round(float(anzahl_einwohner) * (anzahl_motivierte/100))
     einsparen = round((float(red_fleisch) * 7.21*53) + (float(red_auto)*0.2045) + ((float(red_flug)*1049.8*0.197)/4) + (float(red_konsum)*8.45))*menschen

@@ -49,10 +49,10 @@ def akt_abdruck(akt):
     co2_akt = [co2_nahrung1, co2_wohnen_temp, co2_mob1, co2_mob2, co2_konsum1]
     akt_abdruck = sum(co2_akt_nach_kat)
     
-    return akt_abdruck, co2_akt, co2_akt_nach_kat, faktor_nahrung
+    return akt_abdruck, co2_akt, co2_akt_nach_kat, faktor_nahrung, faktor_temp
 
 
-def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung):
+def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung, faktor_temp):
     #akt = [1.1, 'machmal wichtig', 21, 50, 100, 12,60]
     #pref=[1,10,10,10,10]
     #min_vals = [0,21,100,12,60]
@@ -113,16 +113,16 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung):
             [0,0,1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0],
             [0,0,1,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0],
             [0,0,0,1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
-            [-1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
-            [-1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
-            [-1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
-            [-1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
-            [0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
-            [0,-1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
-            [0,-1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
-            [0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
-            [0,0,-1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
-            [0,0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]]
+            [-1,1,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0],
+            [-1,0,1,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,0,0,0],
+            [-1,0,0,1,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,0,0],
+            [-1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,0],
+            [0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0],
+            [0,-1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0],
+            [0,-1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0],
+            [0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0],
+            [0,0,-1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0],
+            [0,0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1]]
     b_ub = [max_co2,-min_vals[0],-(min_vals[1]-18),-min_vals[2],-min_vals[3],-min_vals[4],pow(max_prefdiff,2),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     A_eq = [[-akt[0]*53*1860*1/6*1/340,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [-akt[0]*53*1860*1/6*1/660,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -132,10 +132,20 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung):
             [-akt[0]*53*1860*1/6*1/1370,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0]]
     b_eq = [0.273*365+akt[0]*53*1860*1/6*1/340, 0.202*365+akt[0]*53*1860*1/6*1/660, 0.427*365+akt[0]*53*1860*1/6*1/660, 0.212*365+akt[0]*53*1860*1/6*1/3040, 0.151*365+akt[0]*53*1860*1/6*1/860, 0.04*365+akt[0]*53*1860*1/6*1/1370]
     
+    
+    co2_nahrung1min = min_vals[0]*7.21*53*faktor_nahrung
+    co2_nahrung2min = (99.5*0.36+73.6*0.437+159.6*7.34+77.4*0.82+55*3.23+14.5*1.931)*faktor_nahrung
+    co2_wohnen_strommin = 0.429*1964
+    co2_wohnen_tempmin = 0.27* min_vals[1] *80*faktor_temp
+    co2_mob1min = 0.2045*min_vals[2]
+    co2_mob2min = (min_vals[3]*1049.8*0.197)/4
+    co2_konsum1min = 8.45 * min_vals[4]
+    co2_min = [co2_nahrung1min, co2_nahrung2min,co2_wohnen_strommin, co2_wohnen_tempmin, co2_mob1min, co2_mob2min, co2_konsum1min]
+    minfussmitminvals = sum(co2_min)
     #Löse lineares Programm
     res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=[(0,1),(0,1),(0,1),(0,1),(0,1),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(1,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1)], method='simplex')
        
-    return res.x, max_prefdiff, max_co2
+    return res.x, max_prefdiff, max_co2, minfussmitminvals
        
 # 
 # Titellines -----------------------------------------------------------------------------------------------------------------------
@@ -236,7 +246,7 @@ elif navigation == "Rechner: Fußabdruckoptimierung":
     
      # Berechne den aktuellen fußabdruck
     akt = [float(nahrung1),nahrung2,wohnen1,float(wohnen2),float(mob1),float(mob2),float(konsum1)]
-    akt_abdruck, co2_akt, co2_akt_nach_kat, faktor_nahrung = akt_abdruck(akt)
+    akt_abdruck, co2_akt, co2_akt_nach_kat, faktor_nahrung, faktor_temp = akt_abdruck(akt)
         
     checkbox1 = st.checkbox(label="Schritt 1 abschließen: Fußabdruck berechnen")
     if checkbox1:
@@ -245,14 +255,14 @@ elif navigation == "Rechner: Fußabdruckoptimierung":
         col1.image(imagefuss, width=700, use_column_width=True, clamp=False, channels='RGB', output_format='auto')
         col2.markdown("""<br>
                 <center><font size="4"><b>Dein aktueller Fußabdruck beträgt """+ str(round(akt_abdruck))+""" Kilogramm.</b></font></center><br>
-                Zum Vergleich: Der durchnittliche CO<sub>2</sub> Fußabdruck in Deutschland im Jahr 2019 lag bei ca 7900 Kilogramm.
+                Zum Vergleich: Der durchnittliche CO<sub>2</sub> Fußabdruck in Deutschland liegt bei ca. 7300 Kilogramm.
                 Der durchschnittliche weltweite CO<sub>2</sub> Fußabdruck liegt bei 4800 Kilogramm.<br>
                 In dem neben stehenden Diagramm findest du den Vergleich zum durchnittlichen Fußabdruck eines 
                 Menschen in Deutschlands zu deinem Fußabdruck, aufgeschlüsselt in die vier Kategorien.
                 """,unsafe_allow_html=True)
             
         df = pd.DataFrame(
-            [["Nahrung", 1788,co2_akt_nach_kat[0]], ["Wohnen", 2730,co2_akt_nach_kat[1]], ["Mobilität", 3020,co2_akt_nach_kat[2]],["Kleiderkonsum",474,co2_akt_nach_kat[3]]],
+            [["Nahrung", 1788,co2_akt_nach_kat[0]], ["Wohnen", 1960,co2_akt_nach_kat[1]], ["Mobilität", 3020,co2_akt_nach_kat[2]],["Kleiderkonsum",474,co2_akt_nach_kat[3]]],
             columns=["Kategorie","Durchschnitt CO<sub>2</sub> Deutschland", "Dein CO<sub>2</sub>"])
         fig = px.bar(df, x="Kategorie", y=["Durchschnitt CO<sub>2</sub> Deutschland", "Dein CO<sub>2</sub>"], barmode='group', height=400)
         col3.plotly_chart(fig)
@@ -327,7 +337,7 @@ elif navigation == "Rechner: Fußabdruckoptimierung":
                         min_vals = [float(min_val_nahrung1),float(min_val_wohnen), float(min_val_mob1), float(min_val_mob2), float(min_val_konsum1)]
                         
                         
-                        solution,max_prefdiff,maxco2 = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung)
+                        solution,max_prefdiff,maxco2,minfussmitminvals = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung, faktor_temp)
                         #st.write(solution)
                         #st.write(max_prefdiff)
                     
@@ -341,6 +351,11 @@ elif navigation == "Rechner: Fußabdruckoptimierung":
                                  Informationen über die Grundlage dieser Berechnung. </font><br>
                                 """,unsafe_allow_html=True)
                     
+                        if minfussmitminvals > maxco2:
+                            st.markdown("""
+                                        <b><font size = 5>Wir können deinen Fussabdruck mit deinen Minimalangaben nicht weiter reduzieren,
+                                        vielleicht denkst du nochmal über deine Minimalangaben nach ;)
+                                        </font></b>""",unsafe_allow_html=True)
                         if akt_abdruck <= maxco2:
                             st.markdown("""
                                 <b>Super! Dein aktueller Fußabdruck liegt bereits unter der geforderten CO2-Grenze. 

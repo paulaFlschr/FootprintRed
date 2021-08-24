@@ -53,10 +53,6 @@ def akt_abdruck(akt):
 
 
 def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung, faktor_temp):
-    #akt = [1.1, 'machmal wichtig', 21, 50, 100, 12,60]
-    #pref=[1,10,10,10,10]
-    #min_vals = [0,21,100,12,60]
-    
     
     # zu erreichender fußabdruck ----------------------------------------------------
     if jahr<2030:
@@ -124,12 +120,12 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung, faktor_temp):
             [0,0,-1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0],
             [0,0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1]]
     b_ub = [max_co2,-min_vals[0],-(min_vals[1]-18),-min_vals[2],-min_vals[3],-min_vals[4],pow(max_prefdiff,2),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    A_eq = [[-akt[0]*53*1860*1/6*1/340,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [-akt[0]*53*1860*1/6*1/660,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [-akt[0]*53*1860*1/6*1/1630,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [-akt[0]*53*1860*1/6*1/3040,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [-akt[0]*53*1860*1/6*1/860,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
-            [-akt[0]*53*1860*1/6*1/1370,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0]]
+    A_eq = [[akt[0]*53*1860*1/6*1/340,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [akt[0]*53*1860*1/6*1/660,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [akt[0]*53*1860*1/6*1/1630,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [akt[0]*53*1860*1/6*1/3040,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [akt[0]*53*1860*1/6*1/860,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [akt[0]*53*1860*1/6*1/1370,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0]]
     b_eq = [0.273*365+akt[0]*53*1860*1/6*1/340, 0.202*365+akt[0]*53*1860*1/6*1/660, 0.427*365+akt[0]*53*1860*1/6*1/660, 0.212*365+akt[0]*53*1860*1/6*1/3040, 0.151*365+akt[0]*53*1860*1/6*1/860, 0.04*365+akt[0]*53*1860*1/6*1/1370]
     
     
@@ -144,6 +140,7 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung, faktor_temp):
     minfussmitminvals = sum(co2_min)
     #Löse lineares Programm
     res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=[(0,1),(0,1),(0,1),(0,1),(0,1),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(1,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1)], method='simplex')
+    #res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=[(0,1),(0,1),(0,1),(0,1),(0,1),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(1,1)], method='simplex')
        
     return res.x, max_prefdiff, max_co2, minfussmitminvals
        
@@ -158,7 +155,7 @@ c2.write("""
         # Fußabdruck der Zukunft
         ## - Optimiere deinen ökologischen Fußabdruck -
     """)
-navigation = c3.selectbox('', ["Startseite","Rechner: Fußabdruckoptimierung", "Rechner: Gesellschaftlicher Einfluss","SchülerInnen-Guide","Hintergrund: Fußabdruckberechnung", "Hintergrund: Budgetberechnung", "Hintergrund: Fußabdruckoptimierung","Hintergrund: Datenvalidierung","Quellen & Impressum"])
+navigation = c3.selectbox('', ["Startseite","Rechner: Fußabdruckoptimierung", "Rechner: Gesellschaftlicher Einfluss","SchülerInnen-Guide","Hintergrund: Fußabdruckberechnung", "Hintergrund: Budgetberechnung", "Hintergrund: Fußabdruckoptimierung","Hintergrund: Datenvalidierung", "Hintergrund: Gesellschaftlicher Einfluss","Quellen & Impressum"])
 st.markdown("***")
 hide_footer_style = """
     <style>
@@ -175,9 +172,39 @@ if navigation == 'Startseite':
     imagestart= Image.open('Startseite.png')
     c2.image(imagestart,use_column_width=True, clamp=False, channels='RGB', output_format='auto')
     st.markdown("""<font size = 5>
-                Willkommen bei „Fußabdruck der Zukunft“. Hier kannst du deinen persönlichen
-                CO<sub>2</sub>-Fußabdruck berechnen. Außerdem findest du hier Infos rund um das Thema 
-                CO<sub>2</sub>-Verbrauch und wir erklären dir, wie unser Rechner funktioniert. Schau dir
+                Willkommen bei „Fußabdruck der Zukunft“. Hier kannst du sowohl deinen persönlichen
+                CO<sub>2</sub>-Fußabdruck, als auch eine optimale Verringerung
+                deines Abdrucks berechnen lassen. Außerdem findest du hier Infos rund um das Thema 
+                CO<sub>2</sub>-Verbrauch und wir erklären dir, wie unser Rechner funktioniert. 
+                Unser Guide gibt eine Übersicht, was sich hinter den einzelnen Unterseiten verbirgt.
+                Im Allgemeinen kannst du die Homepage aber auch ohne den Guide problemlos verstehen.</font><br><br>
+                """, unsafe_allow_html=True)
+    guide = st.beta_expander("Guide: Fußabdruck der Zukunft")
+    guide.markdown("""
+                   <br><b>Startseite</b><br>
+                   Die Startseite bietet eine kurze und anschauliche Einführung in das Thema CO2 – Fußabdruck und die Seite „Fußabdruck der Zukunft“. Zur Veranschaulichung, auch im Hinblick auf potenziell jüngere NutzerInnen, wurde ein Video in die Seite eingebettet. 
+                   <br><b>SchülerInnen - Guide</b><br>
+                   Die Homepage soll auch im Rahmen der Schule Anwendung finden. Wie ein möglicher Einsatz aussehen könnte, soll die Unterseite „SchülerInnen – Guide“ veranschaulichen. Sie soll die SchülerInnen durch die Seite führen und an ausgewählten Stellen durch zusätzliche Fragen und Anregungen zum Verständnis beitragen. Zum jetzigen Zeitpunkt sind die Aufgaben an SchülerInnen aus der Mittelstufe gerichtet, weshalb die Unterseite „Hintergrund: Fußabdruckoptimierung“ nicht bearbeitet wird. 
+                   <br><b>Hintergrund: Budgetberechnung</b><br>
+                   Zum Erstellen eines Fußabdruck - Rechners muss eine angemessene Datengrundlage geschaffen werden. Dazu wird auf der Unterseite „Hintergrund: Budgetberechnung“ erklärt, wie die Berechnung aktueller und zukünftiger CO2 – Budgets erfolgt. 
+                   <br><b>Hintergrund: Fußabdruckberechnung</b><br>
+                   Die Unterseite „Hintergrund: Fußabdruckberechnung“ bildet die statistische Grundlage des Rechners. Sie legt die Berechnungen der einzelnen Aspekte Nahrung, Wohnen, Mobilität und Konsum dar und erklärt ihr Zustandekommen.
+                   <br><b>Hintergrund: Fußabdruckoptimierung</b><br>
+                   Die mathematische Grundlage bildet das Optimierungsmodell auf der Unterseite „Hintergrund: Fußabdruckoptimierung“. Die Verarbeitung der Eingabedaten, die Entstehung der Variablen, der Zielfunktion und der Nebenbedingungen werden dort kleinschrittig erklärt und in dem Optimierungsmodell zusammengeführt.
+                   Außerdem wird die computergestützte Berechnung und die dazu nötige Überführung des Modells in die allgemeine Form eines linearen Programms dargestellt.
+                   <br><b>Rechner: Fußabdruckoptimierung</b><br>
+                   Der eigentliche Fußabdruck – Rechner befindet sich auf der Unterseite „Rechner: Fußabdruckoptimierung“. Die Seite ist durch Checkboxen gegliedert, sodass die Nutzung erleichtert wird. 
+                   <br><b>Hintergrund: Datenvalidierung</b><br>
+                   Zur Überprüfung der Ergebnisse des Rechners findet ein Vergleich mit einem anderen Rechner und mit bekannten CO2 – Werten aus der Vergangenheit statt. Dabei wird der Rechner des Umweltbundesamtes herangezogen, da er die gleichen Kategorien behandelt und ähnliche Eingaben fordert. Außerdem wurde er vom Umweltministerium veröffentlicht und wird deshalb als seriöse Vergleichsbasis vermutet. Die Validierung ist auf der Unterseite „Hintergrund: Datenvalidierung“ zu finden. 
+                   <br><b>Hintergrund: Gesellschaftlicher Einfluss</b><br>
+                   Auf der Unterseite „Hintergrund: Gesellschaftlicher Einfluss“ wird kurz die statistische Basis, auf der die Berechnung des „Rechner: Gesellschaftlicher Einfluss“ stattfindet, erklärt. Die Datenbasis bilden die bereits in „Hintergrund: Fußabdruckberechnung“ dargelegten Formeln. 
+                   <br><b>Rechner: Gesellschaftlicher Einfluss</b><br>
+                   Die Unterseite „Rechner: Gesellschaftlicher Einfluss“ dient der anschaulichen und besseren Vorstellung des abstrakten Themenfeldes durch die Reduktion auf einen kleineren Personenkreis. Die Einflussnahme von bestimmten Bevölkerungsanteilen kann hier erkundet werden. 
+                   <br><b>Technische Umsetzung der Homepage</b><br>
+                   Zur Implementierung der Homepage verwendet wir Streamlit. Hierbei handelt es sich einerseits um eine Python basierte Bibliothek zur Implementierung von Data Dashboards und andererseits um einen Deployment – Dienst, der den Veröffentlichungsprozess ermöglicht. Weiterhin wurden die Python - Pakete pandas, PIL, numpy, plotly und re verwendet. Zur Lösung des Optimierungsmodells verwenden wir die Softwareumgebung scipy. Genaueres zur computergestützten Berechnung kann auf der Unterseite „Hintergrund: Fußabdruckoptimierung/ Hintergrund: Computergestützte Berechnung“ nachgelesen werden. 
+                   Der Code kann unter https://github.com/paulaFlschr/FootprintRed/blob/main/footprintapp.py abgerufen werden. Für das gesamte Projekt siehe https://github.com/paulaFlschr/FootprintRed . 
+                   """, unsafe_allow_html=True)
+    st.markdown("""<font size = 5> Schau dir
                 zum Einstieg gerne das Video „Klimaschutz im Alltag – Welchen Einfluss haben 
                 wir?“ an.</font><br><br>
                 """, unsafe_allow_html=True)
@@ -382,7 +409,7 @@ elif navigation == "Rechner: Fußabdruckoptimierung":
                                 c2.image(image_heizen, width=100, clamp=False, channels='RGB', output_format='auto')
                                 c1.markdown("""
                                     <b>Reduziere deine Zimmerwärme auf """+str(red1)+""" Grad (um """+str(reduktion1)+""" %).</b> <br>
-                                    Mit ein paar dicken Socken, einem dicken Pulli und einem leckerer Tee eingekuschtel in eine
+                                    Mit ein paar dicken Socken, einem dicken Pulli und einem leckerer Tee eingekuschelt in eine
                                     flauschige Decke. Klimaschutz muss nicht immer ungemütlich sein.
                                     """,unsafe_allow_html=True)
                             if round(solution[2],4)<1:
@@ -420,6 +447,7 @@ elif navigation == "Rechner: Fußabdruckoptimierung":
                                     Weniger Kleidungsstücke und dafür hochwertige sind deutlich besser für das Klima. Seien wir mal
                                     ehrlich, viele Sachen die wir einmal kaufen ziehen wir am Ende viel zu selten an...
                                     """,unsafe_allow_html=True)
+    st.write(solution)
     st.markdown("***")
     st.markdown("""<font size = 2>
                 Anmerkung: Alle Berechnungen wurden mit festen CO<sub>2</sub> Werten durchgeführt. Auf mögliche Verbesserungen wurde 
@@ -467,7 +495,7 @@ elif navigation == "Rechner: Gesellschaftlicher Einfluss":
         st.markdown("<font size = 5> Wenn du "+str(menschen)+" Menschen motivierst, ihren Fußabdruck mit dir gemeinsam wie angegeben zu reduzieren, dann könnt ihr gemeinsam ungefähr "+str(einsparen/1000)+" Tonnen CO2 einsparen.<font>""",unsafe_allow_html=True)
     
         c1,c2,c3 = st.beta_columns((1,3,1))
-        df = pd.DataFrame({'Zeit':['nachher', 'voher'], 'Tonnen CO<sub>2</sub>':[(menschen*8.013)-einsparen/1000, menschen*8.013]})
+        df = pd.DataFrame({'Zeit':['nachher', 'voher'], 'Tonnen CO<sub>2</sub>':[(menschen*7.243)-einsparen/1000, menschen*7.243]})
         
         fig = px.bar(df, x='Tonnen CO<sub>2</sub>', y="Zeit", orientation='h')
         c2.plotly_chart(fig)
@@ -558,12 +586,12 @@ elif navigation == 'Hintergrund: Fußabdruckberechnung':
              ## Berechnung des persönlichen $CO_{2}$-Verbrauchs
              Zur Ermittlung des individuellen CO<sub>2</sub>-Verbrauchs wird der persönliche 
              Gesamtverbrauch in verschiedene Bereiche unterteilt.
-             Unser Ziel ist es, die Eingabe für den Benutzer möglichst einfach zu gestalten.
+             Unser Ziel ist es, die Eingabe für die Benutzerin/ den Benutzer möglichst einfach zu gestalten.
              Deshalb ist es in einigen Bereichen notwendig Verallgemeinerungen zu treffen.
              Zur Berechnung des persönlichen CO<sub>2</sub>-Verbrauchs pro Jahr sollen folgende 
              Bereiche berücksichtig werden:""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns([1,10,1])
-    c2.markdown("""<ol> <li>Nahrung</li><li>Wohnen</li><li>Mobilität</li><li>Konsum(Kleidung)</li>""",unsafe_allow_html=True)
+    c2.markdown("""<ol> <li>Nahrung</li><li>Wohnen</li><li>Mobilität</li><li>Konsum (Kleidung)</li>""",unsafe_allow_html=True)
     st.markdown("""Diese Bereiche wurden ausgewählt, weil sie zum persönlichen CO<sub>2</sub>
              -Gesamtverbrauch den größten Beitrag leisten [12]. Gleiches gilt für die Aspekte, 
              die in den jeweiligen Kategorien vom Benutzer abgefragt werden. 
@@ -576,13 +604,13 @@ elif navigation == 'Hintergrund: Fußabdruckberechnung':
     c1,c2,c3 = st.beta_columns([1,3,1])
     image3= Image.open('Tab3_Nahrungswerte.PNG')
     c2.image(image3, width=700, clamp=False, channels='RGB', output_format='auto')
-    st.markdown("Zur Berechnung des persönlichen CO<sub>2</sub>-Verbrauchs durch die Nahrung werden vom Benutzer folgende Aspekte selbst angegeben:",unsafe_allow_html=True)
+    st.markdown("Zur Berechnung des persönlichen CO<sub>2</sub>-Verbrauchs durch die Nahrung werden von der Benutzerin/ dem Benutzer folgende Aspekte selbst angegeben:",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns([1,10,1])
     c2.markdown('<ol> <li>Verzehrmenge Fleisch pro Woche in kg</li><li>Regionale Lebensmittel</li>', unsafe_allow_html=True)
-    st.markdown("""Die Berechnung des CO<sub>2</sub>-Verbrauchs durch die Nahrung werden die durchschnittlichen 
+    st.markdown("""Für die Berechnung des CO<sub>2</sub>-Verbrauchs durch die Nahrung werden die durchschnittlichen 
              jährlichen Verzehrmengen mit den entsprechenden CO<sub>2</sub>-Werten multipliziert und über 
-             alle Lebensmittelgruppen aufaddiert, wobei die Verzehrmenge Fleisch vom Benutzer 
-             angegeben wird. Dabei wird nur diese Information vom Benutzer abgefragt, weil der 
+             alle Lebensmittelgruppen aufaddiert, wobei die Verzehrmenge Fleisch von der Benutzerin/ dem Benutzer 
+             angegeben wird. Dabei wird nur diese Information von der Benutzerin/ dem Benutzer abgefragt, weil der 
              CO<sub>2</sub>-Wert von Fleisch einen großen Anteil des CO<sub>2</sub>-Wertes der Nahrung ausmacht. Für die
              übrigen Lebensmittelgruppen wurden Durchschnittswerte angenommen, damit die Eingabe 
              übersichtlich bleibt. Entsprechend muss bei der Berechnung diese wöchentliche Angabe 
@@ -609,13 +637,13 @@ elif navigation == 'Hintergrund: Fußabdruckberechnung':
     image7= Image.open('Tab5_Wohnen.PNG')
     c2.image(image7, width=700, clamp=False, channels='RGB', output_format='auto')
     st.markdown("""Der berechnete Wert des persönlichen CO<sub>2</sub>-Verbrauchs durch den Aspekt
-             Wohnen soll personalisiert werden, indem der Benutzer folgende Angaben macht:""",unsafe_allow_html=True)
+             Wohnen soll personalisiert werden, indem die Benutzerin/ der Benutzer folgende Angaben macht:""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns([1,10,1])
     c2.markdown('<ol> <li>Wohnfläche pro Person</li><li>Eingestellte Raumtemperatur</li>', unsafe_allow_html=True)
     st.markdown("""Die Beschränkung auf diese beiden Aspekte wurde auch hier getroffen, um die Eingabe,
-                auch im Hinblick auf jüngere Benutzer, zu erleichtern. Entsprechend der Wohnungsgröße 
+                auch im Hinblick auf jüngere BenutzerInnen, zu erleichtern. Entsprechend der Wohnungsgröße 
                 wird dann der jährliche Verbrauch mit entsprechenden Durchschnittswerten ermittelt. 
-             Mit diesen beiden Größen wird der CO<sub>2</sub>-Verbrauch des Benutzers für den
+             Mit diesen beiden Größen wird der CO<sub>2</sub>-Verbrauch der Benutzerin/ des Benutzers für den
              Aspekt Wohnen durch die folgende Beziehung berechnet:""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns([1,3,1])
     image8= Image.open('Formel_Wohnen.PNG')
@@ -631,7 +659,7 @@ elif navigation == 'Hintergrund: Fußabdruckberechnung':
     st.markdown("""Außerdem wird der CO<sub>2</sub>-Wert in kgCO<sub>2</sub> pro km für Flugzeuge 
              gemäß [4] mit 0,197 angenommen. 
              Zur Berechnung des persönlichen CO<sub>2</sub>-Verbrauchs unter dem Aspekt
-             Mobilität sollen folgende Angaben des Benutzers berücksichtigt werden:
+             Mobilität sollen folgende Angaben der Benutzerin/ des Benutzers berücksichtigt werden:
              """,unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns([1,10,1])
     c2.markdown("<ol> <li>Gefahrene Autokilometer pro Jahr pro Person</li><li>Flugstunden der letzten vier Jahre <sup>5</sup></li>",unsafe_allow_html=True)
@@ -650,7 +678,7 @@ elif navigation == 'Hintergrund: Fußabdruckberechnung':
     c1,c2,c3 = st.beta_columns([1,3,1])
     image10= Image.open('Tab7_Konsum.PNG')
     c2.image(image10, width=700, clamp=False, channels='RGB', output_format='auto')
-    st.write("Der Benutzer soll dabei folgende Angabe zu seinem Konsumverhalten machen:")
+    st.write("Die Benutzerin/ Der Benutzer soll dabei folgende Angabe zu seinem Konsumverhalten machen:")
     c1,c2,c3 = st.beta_columns([1,10,1])
     c2.markdown('<ol> <li>Anzahl gekaufte Kleidungsstücke pro Jahr</li>', unsafe_allow_html=True)
     st.markdown("""Die Abfrage beschränkt sich auf diesen Bereich, weil die Berücksichtigung weiterer 
@@ -763,7 +791,7 @@ elif navigation == "Hintergrund: Budgetberechnung":
 elif navigation == 'Hintergrund: Fußabdruckoptimierung':
     st.markdown("""
                 Ziel unserer Optimierung ist es, der Benutzerin/ dem Benutzer individuelle Handlungsempfehlungen 
-                über die Verringerung seines CO<sub>2</sub>-Ausstoßes zu geben. Diese Empfehlungen 
+                über die Verringerung ihres/seines CO<sub>2</sub>-Ausstoßes zu geben. Diese Empfehlungen 
                 sollen von den Präferenzen der Nutzerin/ des Nutzers abhängig sein. <br>Unser Modell deckt fünf Bereiche ab, 
                 für welche Empfehlungen gegeben werden:""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,10,1))
@@ -813,7 +841,7 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
     c2.write("$var_{i}$ $\widehat{=}$ Anteil zu dem Aspekt beibehalten wird")
     st.markdown("""<font size = 5><b>Schritt 3: Zielfunktion</b></font><br><br>
                 Die Präferenzen der Nutzerin/ des Nutzers sollen maximiert werden, damit die Reduktion 
-                der Emissionen möglichst komfortabel geschieht. Von der Nutzerin/ des Nutzers erhalten wir direkt
+                der Emissionen möglichst komfortabel geschieht. Von der Nutzerin/ dem Nutzer erhalten wir direkt
                 ihre/ seine Präferenzwerte. Diese liegen zwischen 1 und 10, je höher der Wert desto
                 höher auch die Präferenz. Da $var_{i}$ die Beibehaltung der jeweiligen Kategorien 
                 angibt, erhalten wir durch Multiplikation mit den passenden Präferenzwerten 
@@ -860,7 +888,7 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
     st.write("""Durch die Addition dieser zusätzlichen Verzehrmenge mit der bereits zuvor 
                 verzehrten Menge erhalten wir die neue Verzehrmenge $var_{j}$:""")
     c1,c2,c3 = st.beta_columns((1,4,1))
-    c2.write("$menge_{j} + (1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6 \cdot 1/kalorien_{j} = var_{j}$  $j \in J$")
+    c2.write("$menge_{j} \cdot 365 + (1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6 \cdot 1/kalorien_{j} = var_{j}$  $j \in J$")
     st.markdown("""Für den Gesamtausstoß addieren wir zu den bereits genannten Summen noch die 
                 CO<sub>2</sub>-Emissionen für Strom und den Heizbasiswert. Wir erhalten damit die Budget-Bedingung:""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,4,1))
@@ -879,7 +907,7 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
                 """,unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,4,1))
     c2.write("$18 + var_{Heizen} \cdot (akt_{Heizen}-18) \geq minval_{Heizen}$")
-    st.markdown("""<font size = 5><b>Schritt 6: Nebenbedingung: ausgeglichene Optimierung</b></font><br><br>
+    st.markdown("""<font size = 5><b>Schritt 6: Nebenbedingung - Ausgeglichene Optimierung</b></font><br><br>
                 Das aktuelle Optimierungsmodell würde die Variablen $var_{i}$ nacheinander 
                 auf 0 setzen (bzw. auf den Minimalwert). Bei unterschiedlichen Präferenzwerten
                 würde dies in aufsteigender Reihenfolge bezüglich der Präferenzwerte geschehen,
@@ -909,17 +937,78 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
     imageopt= Image.open('Optimierungsmodell.PNG')
     c2.image(imageopt, width=700, use_column_width=True, clamp=False, channels='RGB', output_format='auto')
     
-    lpumformung = st.beta_expander("Hintergrund: Computergestützte Berechnung")
-    lpumformung.markdown("""<font size = 5><b>Computergestützte Berechnung</b></font><br><br>
+    lpumformung = st.beta_expander("Hintergrund: Computergestützte Berechnung - Lösung des Optimierungsmodells")
+    lpumformung.markdown("""<font size = 5><b>Computergestützte Berechnung - Lösung des Optimierungsmodells</b></font><br><br>
                          Für die Implementierung der Berechnung verwenden wir die Programmiersprache
                          <i> python </i>. Diese bietet viele hilfreiche Pakete und Softwareumgebungen. Zur Lösung unseres
                          Optimierungsmodells verwenden wir die Softwareumgebung <i>scipy</i>.
-                         Die dort implementierte Methoden <i> scipy.optimize.linprog</i> bietet die
+                         Die dort implementierte Methode <i> scipy.optimize.linprog</i> bietet die
                          Möglichkeit, verschiedene Algorithmen zur Lösung von Linearen Programmen
                          zu verwenden (mehr dazu siehe: <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linprog.html" target="_blank">hier</a>).
-                         Wir verwenden in unserer Berechnung die Simplex-Methode
-                         
+                         Wir verwenden in unserer Berechnung die Simplex-Methode. <br>
+                         Dazu muss das obige Optimierungsmodell in die Allgemeine Form für Lineare Programme
+                         überführt werden:
                      """,unsafe_allow_html=True)
+    c1,c2,c3 = lpumformung.beta_columns((1,4,1))
+    lpsf= Image.open('LP_Sf.PNG')
+    c2.image(lpsf, width=300, clamp=False, channels='RGB', output_format='auto')
+    
+    lpumformung.markdown("""
+                         <b>Überführung in LP-Standardform</b><br>
+                         <u>Schritt 1 - Nebenbediungen Ungleichheit:</u>
+                         Die Nebenbedingung zur Budgeteinhaltung ist bereits in der geforderten Form.
+                         Durch eine Multiplikation mit (-1) ist dies auch die Nebenbedingung zur Einhaltung
+                         der Minimalwerte. Die Nebenbedingung der ausgeglichenen Optimierung beinhaltet eine
+                         Betragsfunktion. Zur Auflösung dieser definieren wir uns die Variablen
+                     """,unsafe_allow_html=True)
+    c1,c2,c3 = lpumformung.beta_columns((1,4,1))
+    c2.write("$var_{diffij} = |var_{i} - var_{j}|$  für  $i,j \in J$ .")
+    lpumformung.markdown("""
+                         Daraus ergibt sich
+                     """,unsafe_allow_html=True)
+    c1,c2,c3 = lpumformung.beta_columns((1,4,1))
+    c2.write("$var_{diffij} - |var_{i} - var_{j}| = 0$  für  $i,j \in J$")
+    lpumformung.markdown("""
+                         und damit
+                     """,unsafe_allow_html=True)
+    c1,c2,c3 = lpumformung.beta_columns((1,4,1))
+    c2.write(" 1) $var_{diffij} - var_{i} + var_{j} \leq 0$  für  $i,j \in J$")
+    c2.write(" 2) $var_{diffij} + var_{i} - var_{j} \leq 0$  für  $i,j \in J$")
+    lpumformung.markdown("""
+                         Die Nebenbedigung der Ungleichung ist folglich
+                     """,unsafe_allow_html=True)
+    c1,c2,c3 = lpumformung.beta_columns((1,4,1))
+    lpnb2= Image.open('LP_Nb2.PNG')
+    c2.image(lpnb2, width=1000, clamp=False, channels='RGB', output_format='auto')
+    lpumformung.markdown("""
+                         <u>Schritt 2 - Nebenbedingung Gleichheit:</u>
+                         Unser Optimierungsmodell beinhaltet eine Nebenbedingung mit Gleichheit, 
+                         die Kalorienausgleichsbedingung. Diese müssen wir so umstellen, dass
+                         der Vektor auf der rechten Seite b<sub>eq</sub> und die Matrix A<sub>eq</sub>
+                         auf der linken Seite lediglich Konstanten enthalten. Dazu stellen wir um
+                         und erhalten
+                     """,unsafe_allow_html=True)
+    c1,c2,c3 = lpumformung.beta_columns((1,4,1))
+    c2.write("$var_{j} + var_{Fleisch} \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6 \cdot 1/kalorien_{j} = menge_{j} \cdot 365 + akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6 \cdot 1/kalorien_{j}$  $j \in J$ .")
+    lpumformung.markdown("""
+                         Daraus ergibt sich die Gleichung
+                     """,unsafe_allow_html=True)
+    c1,c2,c3 = lpumformung.beta_columns((1,4,1))
+    lpnb1= Image.open('LP_Nb1.PNG')
+    c2.image(lpnb1, width=1000, clamp=False, channels='RGB', output_format='auto')
+    lpumformung.markdown("""
+                         <u>Schritt 3 - Zielfunktion:</u>
+                         Um die Maximierung zu einer Minimierung umzuformen multiplizieren wir die quadrierten
+                         Präferenzwerte mit (-1). Wir erhalten die Zielfunktion
+                     """,unsafe_allow_html=True)
+    c1,c2,c3 = lpumformung.beta_columns((1,4,1))
+    lpzf= Image.open('LP_Zf.PNG')
+    c2.image(lpzf, width=1000, clamp=False, channels='RGB', output_format='auto')
+    
+    lpumformung.markdown("""
+                         Mit den Definitionen von c, A<sub>ub</sub>, b<sub>ub</sub>, A<sub>eq</sub> und b<sub>eq</sub>
+                         und <i>scipy</i> erhalten wir die optimierten Variablen var<sub>Fsch</sub>, var<sub>Heizen</sub>, var<sub>Auto</sub>, var<sub>Flugzeug</sub> und var<sub>Konsum</sub>.
+                         """,unsafe_allow_html=True)
     
     st.markdown("***")
     st.markdown("""<font size = 2>
@@ -978,13 +1067,37 @@ elif navigation == "Hintergrund: Datenvalidierung":
     st.markdown("""<font size = 2>
                 <sup>6</sup> Dieser Wert wurde von uns geschätzt und entspricht einer Flugreise nach Mallorca im Jahr ;)</font>""",unsafe_allow_html=True)
     
+elif navigation == "Hintergrund: Gesellschaftlicher Einfluss":
+    st.markdown("""
+                In einem ersten Schritt wird auf Basis der Angabe der Anzahl der EinwohnerInnen
+                ein Ausgangswert der CO<sub>2</sub>-Emmissionen <i><b>CO2_Emissionen_Alt</b></i> in einem kleineren, besser vorstellbaren Rahmen
+                bestimmt. Dazu verwenden wir den durchschnittlichen CO<sub>2</sub>-Emmissionswert des Rechners "Fußabdruck der Zukunft" mit Angaben aus dem
+                Jahr 2019.<br>
+                """,unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$CO2\_Emissionen\_Alt = AnzahlEinwohner \cdot 7243 kg$")
+    st.markdown("""
+                Im Folgenden kann eingegeben werden, welcher Anteil dieser EinwohnerInnengruppe <i><b>AnzahlEinwohner</b></i>
+                sein Verhalten ändert und wie diese Veränderungen <i><b>(CO2Red_Fleisch, CO2Red_Auto, CO2Red_Flugzeug, CO2Red_Konsum)</b></i> aussehen sollen. Die entsprechenden Abfragen
+                sind an die Kategorien des "Rechner: Fußabdruckoptimierung" angelehnt und werden analog berechnet.<br>
+                """,unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$CO2\_Einsparen = AnzahlEinwohner \cdot (CO2Red\_Fleisch + CO2Red\_Auto + CO2Red\_Flugzeug + CO2Red\_Konsum)$")
+    st.markdown("""
+                Daraus ergibt sich der neue Wert der CO<sub>2</sub>-Emmissionen <i><b>CO2_Emissionen_Neu</b></i>
+                """,unsafe_allow_html=True)
+    c1,c2,c3 = st.beta_columns((1,4,1))
+    c2.write("$CO2\_Emissionen_Neu = CO2\_Emissionen\_Alt - CO2\_Einsparen$")
+    st.markdown("""
+                Zur Veranschaulichung werden der Ursprungsausstoß und der geänderte Ausstoß in einem 
+                Diagramm gegenübergestellt.
+                """,unsafe_allow_html=True)
+    
 
     
 else:
     
-    #link = '[GitHub](http://github.com)'
-    #st.markdown(link, unsafe_allow_html=True)
-    st.markdown("<font size = 4> Quellen </font>",unsafe_allow_html=True)
+    st.markdown("<font size = 5><b> Literaturverzeichnis </b></font>",unsafe_allow_html=True)
     st.markdown("""
                 [1]: Statistica (2021). Bevölkerung: Einwohnerzahl von Deutschland von 1990 bis 2020. Verfügbar über: https://de.statista.com/statistik/daten/studie/2861/umfrage/entwicklung-der-gesamtbevoelkerung-deutschlands/#professional (letzter Zugriff: 07.07.2021)
                 <br>[1.0]: Statistica (2021). Höhe der Treibhausgas-Emissionen in Deutschland in den Jahren 1990 bis 2020. Verfügbar über: https://de.statista.com/statistik/daten/studie/76558/umfrage/entwicklung-der-treibhausgas-emissionen-in-deutschland/ (letzter Zugriff: 07.07.2021)
@@ -1010,7 +1123,16 @@ else:
                 <br>[12]: Umweltbundesamt. Treibhausgasaustoß pro Kopf in Deutschland nach Konsumbereichen. Verfügbar über: https://www.umweltbundesamt.de/bild/treibhausgas-ausstoss-pro-kopf-in-deutschland-nach (letzter Zugriff: 09.07.2021) 
                 <br>[13]: StromBoB. Durchschnittlicher Stromverbrauch in Deutschland. Verfügbar über: https://www.strombob.de/ratgeber/durchschnittlicher-stromverbrauch/ (letzter Zugriff: 11.07.2021)
                 """, unsafe_allow_html=True)
-    st.write("von Lena Bill & Paula Fleischer")
-    
+    st.markdown("<font size = 5><b> Abbildungsverzeichnis </b></font>",unsafe_allow_html=True)
+    st.markdown(""" Alle verwendeten Abbildung wurden von uns erstellt oder sind lizenzfreie Bilder, 
+                welche von den Seiten <a href="https://pixabay.com/de/" target="_blank">Pixabay</a> und <a href="https://www.pexels.com/de-de/" target="_blank">Pexels</a>.
+                """,unsafe_allow_html=True)
+    st.markdown("***")
+    st.markdown("<font size = 5><b> Impressum </b></font>",unsafe_allow_html=True)
+    st.markdown(""" 
+                Erstellt von Lena Bill & Paula Fleischer <br>
+                Im Rahmen von der Veranstaltung Moderne Mathematik der Technischen Universität Kaiserslautern<br>
+                Im Sommersemester 2021<br>
+                Betreut von Dr. Matrin Bracke & Prof. Dr. Stefan Ruzika""",unsafe_allow_html=True)
     
         

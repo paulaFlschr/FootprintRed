@@ -1003,7 +1003,7 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
                          Um die Maximierung zu einer Minimierung umzuformen multiplizieren wir die quadrierten
                          Präferenzwerte mit (-1). Wir erhalten die Zielfunktion
                      """,unsafe_allow_html=True)
-    lpzf= Image.open('LP_Zf.PNG')
+    lpzf= Image.open('Lp_Zf.PNG')
     lpumformung.image(lpzf, width=1000, clamp=False, channels='RGB', output_format='auto')
     
     lpumformung.markdown("""

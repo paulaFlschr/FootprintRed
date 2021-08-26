@@ -3,6 +3,9 @@
 Created on Tue Jun 29 17:18:44 2021
 
 @author: Paula
+
+In dieser Datei ist die Homepage Fußabdruck der Zukunft mit den entsprechenden Unterseiten
+implementiert. Die Unterseiten sind durch '===' gegliedert.
 """
 
 import streamlit as st
@@ -13,6 +16,17 @@ import plotly.express as px
 import scipy.optimize as sc
 import re
 
+#============================================================================================
+#Diese Funktion berechnet den aktuellen CO2 Fußabdruck nach den Eingaben im Rechner 
+#Fußabdruckoptimierung. Die Erklärungen der einzelnen Zahlenwerte befindet sich auf
+#der Unterseite Hintergrund:Fußabdruckberechnung.
+#Input: akt - Array in welchem die Eingaben des Nutzers im Rechner Fußabdruckoptimierung stehen
+#Output: 1) akt_abdruck - aktueller CO2 Abdruck in kg
+#       2) co2_akt - Array mit den aktuellen CO2 Werten in kg für die fünf Optimierungskategorien
+#       3) co2_akt_nach_kat - Array mit aktuellen CO2 Werten in kg für die vier Unterkategorien zum plotten
+#       4) faktor_nahrung - CO2 Faktor abhängig von regionalem Lebensmittelkauf (benötigt für spätere Berechnungen)
+#       5) faktor_temp - CO2 Faktor abhängig von der Raumtemperatur (benötigt für spätere Berechnungen)
+#============================================================================================
 def akt_abdruck(akt):
     
     if akt[1] == 'sehr wichtig':
@@ -45,54 +59,57 @@ def akt_abdruck(akt):
     co2_mob1 = 0.2045*akt[4]
     co2_mob2 = (akt[5]*1049.8*0.197)/4
     co2_konsum1 = 8.45 * akt[6]
+    
+    # Werte zur Rückgabe/ Plotten
     co2_akt_nach_kat = [co2_nahrung1 + co2_nahrung2, co2_wohnen_strom + co2_wohnen_temp, co2_mob1 + co2_mob2, co2_konsum1]
     co2_akt = [co2_nahrung1, co2_wohnen_temp, co2_mob1, co2_mob2, co2_konsum1]
     akt_abdruck = sum(co2_akt_nach_kat)
     
     return akt_abdruck, co2_akt, co2_akt_nach_kat, faktor_nahrung, faktor_temp
 
+#=================================================================================================
+#Optimierungsfunktion nach der Eingabe aller Werte/ Präferenzen des Nutzers
+#Input: akt (Array in welchem die Eingaben des Nutzers im Rechner Fußabdruckoptimierung stehen); 
+#       pref (Array mit Präferenzen des Nutzers); min_vals (Array mit Minimalangaben des Nutzers);
+#       jahr (Optimierungsjahr); co2_akt (Array mit den aktuellen CO2 Werten in kg für die fünf Optimierungskategorien);
+#       faktor_nahrung/ faktor_temp (s.o.)
+#Output:res.x (Werte der Optimierungsvariablen);
+#       minfussmitminvals (Minimaler Fußabdruck der mit Eingabe der Minimalwerte des Nutzers möglich ist)
+#====================================================================================================
 
 def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung, faktor_temp):
     
-    # zu erreichender fußabdruck ----------------------------------------------------
+    # zu erreichender fußabdruck
     if jahr<2030:
         max_co2 =  -185*(jahr-2020)+7440
     elif jahr<2040:
         max_co2 =  -176*(jahr-2030)+5590
     else:
         max_co2 =  -184*(jahr-2040)+3830
-        
-    co2_essen = [0.36*faktor_nahrung, 0.437*faktor_nahrung, 7.34*faktor_nahrung, 0.82*faktor_nahrung, 3.23*faktor_nahrung, 1.931*faktor_nahrung]
+    #CO2 Basiswert für die Nahrung ohne Fleisch
+    co2_nahrung2 = (99.5*0.36+73.6*0.437+159.6*7.34+77.4*0.82+55*3.23+14.5*1.931)*faktor_nahrung
     #prefunterschied
     max_prefdiff = 0
     for i in range(4):
         for j in range(4-i):
             if max_prefdiff < abs(pref[i]-pref[i+1+j]):
                 max_prefdiff = abs(pref[i]-pref[i+1+j])
+    
+    #Berechne minimal möglichen Fußabdruck mit Minimalwerten, um zu schauen, ob Problem überhaupt lösbar
+    co2_nahrung1min = min_vals[0]*7.21*53*faktor_nahrung
+    co2_nahrung2min = (99.5*0.36+73.6*0.437+159.6*7.34+77.4*0.82+55*3.23+14.5*1.931)*faktor_nahrung
+    co2_wohnen_strommin = 0.429*1964
+    co2_wohnen_tempmin = 0.27* min_vals[1] *80*faktor_temp
+    co2_mob1min = 0.2045*min_vals[2]
+    co2_mob2min = (min_vals[3]*1049.8*0.197)/4
+    co2_konsum1min = 8.45 * min_vals[4]
+    co2_min = [co2_nahrung1min, co2_nahrung2min,co2_wohnen_strommin, co2_wohnen_tempmin, co2_mob1min, co2_mob2min, co2_konsum1min]
+    minfussmitminvals = sum(co2_min)
         
-    # Generiere Lineares Programm------------------------------------------------
-# =============================================================================
-#     c = [-pref[0],-pref[1],-pref[2],-pref[3],-pref[4],0,0,0,0,0,0,0]
-#     
-#     A_ub = [[co2_akt[0],co2_akt[1],co2_akt[2],co2_akt[3],co2_akt[4],co2_essen[0],co2_essen[1],co2_essen[2],co2_essen[3],co2_essen[4],co2_essen[5],0.429*akt[3]*80],
-#             [-akt[0],0,0,0,0,0,0,0,0,0,0,0],
-#             [0,-akt[2],0,0,0,0,0,0,0,0,0,0],
-#             [0,0,-akt[4],0,0,0,0,0,0,0,0,0],
-#             [0,0,0,-akt[5],0,0,0,0,0,0,0,0],
-#             [0,0,0,0,-akt[6],0,0,0,0,0,0,0]]
-#     b_ub = [max_co2,-min_vals[0],-min_vals[1],-min_vals[2],-min_vals[3],-min_vals[4]]
-#     A_eq = [[-akt[0]*53*1860*1/6*1/340,0,0,0,0,1,0,0,0,0,0,0],
-#             [-akt[0]*53*1860*1/6*1/660,0,0,0,0,0,1,0,0,0,0,0],
-#             [-akt[0]*53*1860*1/6*1/1630,0,0,0,0,0,0,1,0,0,0,0],
-#             [-akt[0]*53*1860*1/6*1/3040,0,0,0,0,0,0,0,1,0,0,0],
-#             [-akt[0]*53*1860*1/6*1/860,0,0,0,0,0,0,0,0,1,0,0],
-#             [-akt[0]*53*1860*1/6*1/1370,0,0,0,0,0,0,0,0,0,1,0]]
-#     b_eq = [0.273*365+akt[0]*53*1860*1/6*1/340, 0.202*365+akt[0]*53*1860*1/6*1/660, 0.427*365+akt[0]*53*1860*1/6*1/660, 0.212*365+akt[0]*53*1860*1/6*1/3040, 0.151*365+akt[0]*53*1860*1/6*1/860, 0.04*365+akt[0]*53*1860*1/6*1/1370]
-#     
-# =============================================================================
+    # Generiere Lineares Programm
     c = [-pow(pref[0],2),-pow(pref[1],2),-pow(pref[2],2),-pow(pref[3],2),-pow(pref[4],2),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     
-    A_ub = [[co2_akt[0],(co2_akt[1]-0.27* akt[3] *80*0.8),co2_akt[2],co2_akt[3],co2_akt[4],co2_essen[0],co2_essen[1],co2_essen[2],co2_essen[3],co2_essen[4],co2_essen[5],0.429*akt[3]*80+0.27* akt[3] *80*0.8,0,0,0,0,0,0,0,0,0,0],
+    A_ub = [[co2_akt[0],(co2_akt[1]-0.27* akt[3] *80*0.8),co2_akt[2],co2_akt[3],co2_akt[4],0.36*99.5,0.437*73.6,7.34*159.6,0.82*77.4,3.23*55,1.931*14.5,0.429*akt[3]*80+0.27* akt[3] *80*0.8+co2_nahrung2,0,0,0,0,0,0,0,0,0,0],
             [-akt[0],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,-(akt[2]-18),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,-akt[4],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -120,35 +137,24 @@ def optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung, faktor_temp):
             [0,0,-1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0],
             [0,0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1]]
     b_ub = [max_co2,-min_vals[0],-(min_vals[1]-18),-min_vals[2],-min_vals[3],-min_vals[4],pow(max_prefdiff,2),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    A_eq = [[akt[0]*53*1860*1/6*1/340,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [akt[0]*53*1860*1/6*1/660,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [akt[0]*53*1860*1/6*1/1630,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [akt[0]*53*1860*1/6*1/3040,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [akt[0]*53*1860*1/6*1/860,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
-            [akt[0]*53*1860*1/6*1/1370,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0]]
-    b_eq = [0.273*365+akt[0]*53*1860*1/6*1/340, 0.202*365+akt[0]*53*1860*1/6*1/660, 0.427*365+akt[0]*53*1860*1/6*1/660, 0.212*365+akt[0]*53*1860*1/6*1/3040, 0.151*365+akt[0]*53*1860*1/6*1/860, 0.04*365+akt[0]*53*1860*1/6*1/1370]
+
+
+    A_eq = [[akt[0]*53*1860*1/6*1/340,0,0,0,0,99.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [akt[0]*53*1860*1/6*1/660,0,0,0,0,0,73.6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [akt[0]*53*1860*1/6*1/1630,0,0,0,0,0,0,159.6,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [akt[0]*53*1860*1/6*1/3040,0,0,0,0,0,0,0,77.4,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [akt[0]*53*1860*1/6*1/860,0,0,0,0,0,0,0,0,55,0,0,0,0,0,0,0,0,0,0,0,0],
+            [akt[0]*53*1860*1/6*1/1370,0,0,0,0,0,0,0,0,0,14.5,0,0,0,0,0,0,0,0,0,0,0]]
+    b_eq = [akt[0]*53*1860*1/6*1/340,akt[0]*53*1860*1/6*1/660, akt[0]*53*1860*1/6*1/660, akt[0]*53*1860*1/6*1/3040, akt[0]*53*1860*1/6*1/860, akt[0]*53*1860*1/6*1/1370]
     
-    
-    co2_nahrung1min = min_vals[0]*7.21*53*faktor_nahrung
-    co2_nahrung2min = (99.5*0.36+73.6*0.437+159.6*7.34+77.4*0.82+55*3.23+14.5*1.931)*faktor_nahrung
-    co2_wohnen_strommin = 0.429*1964
-    co2_wohnen_tempmin = 0.27* min_vals[1] *80*faktor_temp
-    co2_mob1min = 0.2045*min_vals[2]
-    co2_mob2min = (min_vals[3]*1049.8*0.197)/4
-    co2_konsum1min = 8.45 * min_vals[4]
-    co2_min = [co2_nahrung1min, co2_nahrung2min,co2_wohnen_strommin, co2_wohnen_tempmin, co2_mob1min, co2_mob2min, co2_konsum1min]
-    minfussmitminvals = sum(co2_min)
     #Löse lineares Programm
     res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=[(0,1),(0,1),(0,1),(0,1),(0,1),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(1,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1),(0,1)], method='simplex')
-    #res = sc.linprog(c, A_ub, b_ub, A_eq, b_eq, bounds=[(0,1),(0,1),(0,1),(0,1),(0,1),(0,None),(0,None),(0,None),(0,None),(0,None),(0,None),(1,1)], method='simplex')
+     
+    return res.x, max_co2, minfussmitminvals
        
-    return res.x, max_prefdiff, max_co2, minfussmitminvals
-       
-# 
 # Titellines -----------------------------------------------------------------------------------------------------------------------
 imagefuss= Image.open('Fuss.PNG')
 st.set_page_config(page_title='Fußabdruck der Zukunft', page_icon=imagefuss, layout='wide', initial_sidebar_state='expanded')
-#st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
 c1,c2,c3 = st.beta_columns((0.5,4,3))
 c1.image(imagefuss,width = 80,  clamp=False, channels='RGB', output_format='auto')
 c2.write("""
@@ -164,7 +170,6 @@ hide_footer_style = """
 st.markdown(hide_footer_style, unsafe_allow_html=True)
 
 #==============================================================================================================================
-# Motivation --------------------------------------------------------------------------------------------------------------------
 if navigation == 'Startseite':
     c1,c2,c3 = st.beta_columns([1,6,1])
     c2.markdown('<div style="text-align: center"><em> <font size = 6><b> Sei du selbst die Veränderung, die du dir wünschst für diese Welt! </b></font> - Mahatma Gandhi</em></div>', unsafe_allow_html=True)
@@ -228,7 +233,7 @@ if navigation == 'Startseite':
                 auf den Gesamtverbrauch zu bekommen.
                 """, unsafe_allow_html=True)
                 
- #=========================================================================================================               
+#=========================================================================================================               
             
 elif navigation == "Rechner: Fußabdruckoptimierung":
     st.write("""
@@ -365,7 +370,7 @@ elif navigation == "Rechner: Fußabdruckoptimierung":
                         min_vals = [float(min_val_nahrung1),float(min_val_wohnen), float(min_val_mob1), float(min_val_mob2), float(min_val_konsum1)]
                         
                         
-                        solution,max_prefdiff,maxco2,minfussmitminvals = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung, faktor_temp)
+                        solution,maxco2,minfussmitminvals = optimize(akt, pref, min_vals, jahr, co2_akt, faktor_nahrung, faktor_temp)
                         #st.write(solution)
                         #st.write(max_prefdiff)
                     
@@ -447,7 +452,7 @@ elif navigation == "Rechner: Fußabdruckoptimierung":
                                     Weniger Kleidungsstücke und dafür hochwertige sind deutlich besser für das Klima. Seien wir mal
                                     ehrlich, viele Sachen die wir einmal kaufen ziehen wir am Ende viel zu selten an...
                                     """,unsafe_allow_html=True)
-    st.write(solution)
+    
     st.markdown("***")
     st.markdown("""<font size = 2>
                 Anmerkung: Alle Berechnungen wurden mit festen CO<sub>2</sub> Werten durchgeführt. Auf mögliche Verbesserungen wurde 
@@ -861,7 +866,7 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
                führen wir Variablen""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,4,1))
     c2.write("$var_{j}$ für $j \in J$ mit $var_{j}  \geq 0$  $j \in J$")
-    c2.write("$var_{j} \widehat{=}$ jährliche Verzehrmenge der Lebensmittelgruppe $j$ in kg")
+    c2.write("$var_{j} \widehat{=}$ Vervielfachung der Lebensmittelgruppe $j$ in kg")
     st.write("""ein, die diesen Austauschprozess simulieren.""")
     st.markdown(""" Um eine möglichst realistische Einschätzung zu geben, wird der tägliche 
                Kalorienbedarf ausgehend von der angegebenen Verzehrmenge Fleisch und den 
@@ -881,18 +886,17 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
     c1,c2,c3 = st.beta_columns((1,4,1))
     c2.write("$(1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6$")
     st.write("""Abschließend wird der zusätzliche Kalorienwert in Kilogramm umgerechnet. Dies geschieht
-             durch Division durch die Kilokalorien pro Kilogramm des entsprechenden Lebensmittels:
+             durch Division durch die Kilokalorien pro Kilogramm des entsprechenden Lebensmittels. Wir erhalten
+             die zusätzliche Verzehrmenge
                 """)
     c1,c2,c3 = st.beta_columns((1,4,1))
-    c2.write("$(1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6 \cdot 1/kalorien_{j}$")
-    st.write("""Durch die Addition dieser zusätzlichen Verzehrmenge mit der bereits zuvor 
-                verzehrten Menge erhalten wir die neue Verzehrmenge $var_{j}$:""")
-    c1,c2,c3 = st.beta_columns((1,4,1))
-    c2.write("$menge_{j} \cdot 365 + (1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6 \cdot 1/kalorien_{j} = var_{j}$  $j \in J$")
+    c2.write("$var_{j} \cdot menge_{j} = (1-var_{Fleisch}) \cdot akt_{Fleisch} \cdot 53 \cdot 1860 \cdot 1/6 \cdot 1/kalorien_{j}$  $j \in J$")
+    st.write("""wobei $menge_{j}$ der ursprünglichen Verzehrmenge der Lebensmittelgruppe $j$ entspricht.
+                """)
     st.markdown("""Für den Gesamtausstoß addieren wir zu den bereits genannten Summen noch die 
-                CO<sub>2</sub>-Emissionen für Strom und den Heizbasiswert. Wir erhalten damit die Budget-Bedingung:""",unsafe_allow_html=True)
+                CO<sub>2</sub>-Emissionen für Strom und den Heiz- sowie den Nahrungsbasiswert. Wir erhalten damit die Budget-Bedingung:""",unsafe_allow_html=True)
     c1,c2,c3 = st.beta_columns((1,4,1))
-    c2.write("$\displaystyle\sum\limits_{i \in I} var_{i} \cdot co2akt_{i} + \displaystyle\sum\limits_{j \in J} var_{j} \cdot co2ess_{j} + co2strom + co2heizen \leq maxco2$")
+    c2.write("$\displaystyle\sum\limits_{i \in I} var_{i} \cdot co2akt_{i} + \displaystyle\sum\limits_{j \in J} var_{j} \cdot co2ess_{j} + co2strom + co2heizen + co2nahrung \leq maxco2$")
     st.markdown("""<font size = 5><b>Schritt 5: Nebenbedingung - Minimalwerte einhalten</b></font><br><br>
                 Unser Rechner bietet die Möglichkeit, Minimalwerte für einzelne Kategorien 
                 zu setzen. Um diese einzuhalten muss garantiert sein, dass der von unserer 
@@ -977,9 +981,8 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
     lpumformung.markdown("""
                          Die Nebenbedigung der Ungleichung ist folglich
                      """,unsafe_allow_html=True)
-    c1,c2,c3 = lpumformung.beta_columns((1,4,1))
     lpnb2= Image.open('LP_Nb2.PNG')
-    c2.image(lpnb2, width=1000, clamp=False, channels='RGB', output_format='auto')
+    lpumformung.image(lpnb2, width=1000, clamp=False, channels='RGB', output_format='auto')
     lpumformung.markdown("""
                          <u>Schritt 2 - Nebenbedingung Gleichheit:</u>
                          Unser Optimierungsmodell beinhaltet eine Nebenbedingung mit Gleichheit, 
@@ -993,17 +996,15 @@ elif navigation == 'Hintergrund: Fußabdruckoptimierung':
     lpumformung.markdown("""
                          Daraus ergibt sich die Gleichung
                      """,unsafe_allow_html=True)
-    c1,c2,c3 = lpumformung.beta_columns((1,4,1))
     lpnb1= Image.open('LP_Nb1.PNG')
-    c2.image(lpnb1, width=1000, clamp=False, channels='RGB', output_format='auto')
+    lpumformung.image(lpnb1, width=1000, clamp=False, channels='RGB', output_format='auto')
     lpumformung.markdown("""
                          <u>Schritt 3 - Zielfunktion:</u>
                          Um die Maximierung zu einer Minimierung umzuformen multiplizieren wir die quadrierten
                          Präferenzwerte mit (-1). Wir erhalten die Zielfunktion
                      """,unsafe_allow_html=True)
-    c1,c2,c3 = lpumformung.beta_columns((1,4,1))
     lpzf= Image.open('LP_Zf.PNG')
-    c2.image(lpzf, width=1000, clamp=False, channels='RGB', output_format='auto')
+    lpumformung.image(lpzf, width=1000, clamp=False, channels='RGB', output_format='auto')
     
     lpumformung.markdown("""
                          Mit den Definitionen von c, A<sub>ub</sub>, b<sub>ub</sub>, A<sub>eq</sub> und b<sub>eq</sub>

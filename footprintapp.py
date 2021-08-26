@@ -1126,7 +1126,7 @@ else:
                 """, unsafe_allow_html=True)
     st.markdown("<font size = 5><b> Abbildungsverzeichnis </b></font>",unsafe_allow_html=True)
     st.markdown(""" Alle verwendeten Abbildung wurden von uns erstellt oder sind lizenzfreie Bilder, 
-                welche von den Seiten <a href="https://pixabay.com/de/" target="_blank">Pixabay</a> und <a href="https://www.pexels.com/de-de/" target="_blank">Pexels</a>.
+                welche von den Seiten <a href="https://pixabay.com/de/" target="_blank">Pixabay</a> und <a href="https://www.pexels.com/de-de/" target="_blank">Pexels</a> stammen.
                 """,unsafe_allow_html=True)
     st.markdown("***")
     st.markdown("<font size = 5><b> Impressum </b></font>",unsafe_allow_html=True)
